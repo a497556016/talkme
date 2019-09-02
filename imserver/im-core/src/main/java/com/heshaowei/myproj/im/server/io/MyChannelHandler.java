@@ -9,6 +9,8 @@ import com.heshaowei.myproj.im.server.model.Message;
 import com.heshaowei.myproj.im.server.model.UserMessage;
 import com.heshaowei.myproj.im.server.utils.GsonUtil;
 import com.heshaowei.myproj.im.server.utils.JwtUtils;
+import com.heshaowei.myproj.utils.image.ImageHandler;
+import com.heshaowei.myproj.utils.image.ImageUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
@@ -22,6 +24,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import sun.misc.BASE64Encoder;
 
 import java.util.Date;
 
@@ -31,6 +34,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyChannelHandler.class);
 
     private String URI = "websocket";
+    private String fileSavePath;
 
     private WebSocketServerHandshaker handshaker ;
 
@@ -40,6 +44,11 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     public MyChannelHandler withURI(String uri){
         this.URI = uri;
+        return this;
+    }
+
+    public MyChannelHandler withFileSavePath(String fileSavePath){
+        this.fileSavePath = fileSavePath;
         return this;
     }
 
@@ -178,9 +187,19 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         if(MessageTypes.USER.getValue().equals(type)) {
             UserMessage m = UserMessage.buildFromJson(text);
+            if(null != this.fileSavePath) {
+                try {
+                    byte[] buffer = new ImageHandler(this.fileSavePath + m.getSrc()).scaleW(100).writeToBytes();
+                    String base64 = new BASE64Encoder().encode(buffer);
+                    m.setThumbnail("data:image/jpeg;base64," + base64);
+                } catch (Exception e) {
+
+                }
+            }
+
             Channel channel = GlobalUserUtil.getChannel(m.getTo().getUsername());
             if(null != channel) {
-                channel.writeAndFlush(msg.copy()).addListener(new GenericFutureListener<Future<? super Void>>() {
+                channel.writeAndFlush(new TextWebSocketFrame(GsonUtil.get().toJson(m))).addListener(new GenericFutureListener<Future<? super Void>>() {
                     @Override
                     public void operationComplete(Future<? super Void> future) throws Exception {
                         if(future.isSuccess()){

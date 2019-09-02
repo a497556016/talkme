@@ -94,7 +94,10 @@
             }
         },
         mounted(){
-            this.reconnect()
+            this.reconnect();
+
+            // this.$imageViewer(require('../assets/img/avatar.jpg'));
+            // this.$alert.info('hhhhhhhhh')
         },
         methods: {
             ...chatStore.mapActions({
@@ -179,7 +182,7 @@
                     if(res.code == 1) {
                         this.iMServer.send({
                             type: 'user',
-                            data: res.data.path,
+                            src: res.data.path,
                             mediaType: 'PICTURE',
                             from: {
                                 id: this.loginUserInfo.id,

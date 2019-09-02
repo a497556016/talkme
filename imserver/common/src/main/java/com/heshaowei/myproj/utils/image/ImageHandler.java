@@ -3,6 +3,7 @@ package com.heshaowei.myproj.utils.image;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
@@ -46,7 +47,7 @@ public class ImageHandler {
     }
 
     private void setBufferedImage() throws Exception {
-        File file = new File(openUrl);
+        /*File file = new File(openUrl);
         if (!file.isFile()) {
             throw new Exception("ImageHandler>>>" + file + " 不是一个图片文件!");
         }
@@ -54,7 +55,39 @@ public class ImageHandler {
             this.bufferedImage = ImageIO.read(file);
         } catch (IOException e) {
             e.printStackTrace();
+        }*/
+
+        Image src = Toolkit.getDefaultToolkit().getImage(openUrl);
+        this.bufferedImage = toBufferedImage(src);//Image to BufferedImage
+    }
+
+    private static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
         }
+        // This code ensures that all the pixels in the image are loaded
+        image = new ImageIcon(image).getImage();
+        BufferedImage bimage = null;
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            int transparency = Transparency.OPAQUE;
+            GraphicsDevice gs = ge.getDefaultScreenDevice();
+            GraphicsConfiguration gc = gs.getDefaultConfiguration();
+            bimage = gc.createCompatibleImage(image.getWidth(null), image.getHeight(null), transparency);
+        } catch (HeadlessException e) {
+            // The system does not have a screen
+        }
+        if (bimage == null) {
+            // Create a buffered image using the default color model
+            int type = BufferedImage.TYPE_INT_RGB;
+            bimage = new BufferedImage(image.getWidth(null), image.getHeight(null), type);
+        }
+        // Copy image to buffered image
+        Graphics g = bimage.createGraphics();
+        // Paint the image onto the buffered image
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return bimage;
     }
 
     private String getSuffix() {

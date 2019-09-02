@@ -22,9 +22,13 @@ public class Message {
      */
     private String msg;
     /**
-     * 媒体消息
+     * 缩略图base64数据
      */
-    private Object data;
+    private String thumbnail;
+    /**
+     * 媒体文件原始路径
+     */
+    private String src;
     /**
      * 媒体类型
      */

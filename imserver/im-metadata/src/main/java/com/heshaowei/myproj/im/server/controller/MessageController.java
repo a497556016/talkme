@@ -10,6 +10,7 @@ import com.heshaowei.myproj.im.server.repository.GroupMessageRepository;
 import com.heshaowei.myproj.im.server.repository.UserMessageRepository;
 import com.heshaowei.myproj.im.server.utils.GsonUtil;
 import com.heshaowei.myproj.im.server.utils.LoginUserUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,7 @@ public class MessageController {
     @GetMapping("/queryNotReceiveMessages")
     public Result<Page<UserMessage>> queryNotReceiveMessages(String loginUsername, String lineUsername){
         if(null != loginUsername && null != lineUsername) {
-            Sort sort = Sort.by(Sort.Direction.DESC,"time");
+            Sort sort = Sort.by(Sort.Direction.ASC,"time");
             Page<UserMessage> page = this.userMessageRepository.selectNotReceiveMessages(loginUsername, lineUsername, PageRequest.of(0, 10, sort));
             //修改状态
             page.getContent().forEach(m -> m.setSendState(MessageStates.SUCCESS));
@@ -56,6 +57,10 @@ public class MessageController {
     @PostMapping("/saveUserMessage")
     public Result saveUserMessage(@RequestParam("message") String messageJson){
         UserMessage message = GsonUtil.get().fromJson(messageJson, UserMessage.class);
+        String thumbnail = message.getThumbnail();
+        if(!StringUtils.isBlank(thumbnail)){
+            message.setThumbnail(thumbnail.replaceAll(" ", "+"));
+        }
         this.userMessageRepository.save(message);
         return Result.success();
     }

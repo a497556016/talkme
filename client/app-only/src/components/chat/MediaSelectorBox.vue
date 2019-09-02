@@ -71,8 +71,9 @@
             }
             .text {
                 margin-top: 0.08rem;
-                font-size: 1em;
+                font-size: 0.7em;
                 height: 20%;
+                color: @gray-dark;
             }
         }
     }

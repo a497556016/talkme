@@ -10,7 +10,8 @@ class FileService {
     }
 
     fileURL(path){
-        return http.defaults.baseURL + '/file/download?path='+encodeURI(path);
+        const url = http.defaults.baseURL + '/file/download?path='+encodeURI(path);
+        return url;
     }
 }
 

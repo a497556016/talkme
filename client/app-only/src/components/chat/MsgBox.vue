@@ -9,7 +9,7 @@
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
 
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
-                <img :src="imagePath(record.data)"/>
+                <img @click="fullScreenView(record.src)" :src="record.thumbnail"/>
             </div>
             <div class="text" v-else>{{record.msg}}</div>
         </div>
@@ -34,6 +34,9 @@
         methods: {
             imagePath(path){
                 return fileService.fileURL(path);
+            },
+            fullScreenView(path){
+                this.$imageViewer(this.imagePath(path));
             }
         }
     }

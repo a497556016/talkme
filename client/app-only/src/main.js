@@ -15,6 +15,9 @@ import 'font-awesome/css/font-awesome.min.css'
 
 import iMServer from './util/io'
 
+import dialog from './util/plugin/dialog'
+Vue.use(dialog);
+
 Vue.config.productionTip = false
 Vue.prototype.axios = http;
 Vue.prototype.iMServer = iMServer;

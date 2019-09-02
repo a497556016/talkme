@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -43,11 +44,15 @@ public class FileController {
         String path = "\\im\\pictures\\"+fileName;
         f.setPath(path);
         f.setFileName(fileName);
-        f.setContentType(MediaTypes.PICTURE.name());
+        f.setContentType("image/jpeg");
 
         BASE64Decoder decoder = new BASE64Decoder();
         try {
-            byte[] buffer = decoder.decodeBuffer(fileReq.getFile());
+            String fileStr = fileReq.getFile();
+            if(fileStr.contains(",")){
+                fileStr = fileStr.split(",")[1];
+            }
+            byte[] buffer = decoder.decodeBuffer(fileStr);
             java.io.File dest = new java.io.File(this.savePath + path);
             if(!dest.getParentFile().exists()){
                 dest.getParentFile().mkdirs();
@@ -83,5 +88,24 @@ public class FileController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    @GetMapping("/base64")
+    public String base64(@RequestParam("path") String encodedPath){
+        try {
+            String path = URLDecoder.decode(encodedPath, StandardCharsets.UTF_8.name());
+            java.io.File file = new java.io.File(this.savePath + path);
+            if (file.exists()) {
+                BASE64Encoder encoder = new BASE64Encoder();
+                String base64 = encoder.encode(FileUtils.readFileToByteArray(file));
+                return "data:image/jpeg;base64,"+base64;
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }

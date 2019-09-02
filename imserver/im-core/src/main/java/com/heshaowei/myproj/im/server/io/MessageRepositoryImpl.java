@@ -48,13 +48,6 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
     public void run() {
         //轮询检查是否有新的消息，有就调用远程元数据服务保存
         while(true) {
-            //间隔时间
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
             log.debug("轮询检查需要保存的消息："+messages.size());
 
             if(messages.isEmpty()){
@@ -65,8 +58,15 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
             Message message = messages.remove(0);
             int code = this.save(message);
             //保存失败，重新放进去
-            if(code == 0){
+            /*if(code == 0){
                 messages.add(message);
+            }*/
+
+            //间隔时间
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
