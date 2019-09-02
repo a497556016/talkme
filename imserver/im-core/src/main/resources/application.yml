@@ -1,0 +1,14 @@
+server:
+  port: 8082
+
+netty:
+  server:
+    port: 8000
+
+spring:
+  application:
+    name: im-core-server
+
+feign:
+  hystrix:
+    enabled: true
