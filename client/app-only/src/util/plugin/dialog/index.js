@@ -1,5 +1,6 @@
 import Dialog from './Dialog'
 import Toast from './Toast'
+import LoadingMask from './LoadingMask'
 
 function DialogBuilder(Vue) {
     return {
@@ -24,6 +25,11 @@ function DialogBuilder(Vue) {
         installImage(src, options){
             this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);
         },
+
+        installLoadingMask(msg, options){
+            this.install(Object.assign({msg}, options), LoadingMask);
+        },
+
         install(options, comp){
             const dialog = Vue.extend(comp);
             const component = new dialog({
@@ -46,5 +52,20 @@ export default {
         }
         Vue.prototype.$confirm = db.installConfirm.bind(db);
         Vue.prototype.$imageViewer = db.installImage.bind(db);
+        Vue.prototype.$loading = {
+            mask: db.installLoadingMask.bind(db),
+            bar(){
+
+            },
+            close() {
+                console.log('关闭加载')
+                const items = document.querySelector('body').getElementsByClassName('loading-mask');
+                if(items){
+                    for(let i=0;i<items.length;i++){
+                        items[i].remove();
+                    }
+                }
+            }
+        }
     }
 }

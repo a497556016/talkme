@@ -56,7 +56,7 @@
             color: #ffffff;
             border-radius: 5px;
             opacity: 0.8;
-            font-size: 9Wpx;
+            font-size: 9px;
         }
     }
 </style>

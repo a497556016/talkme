@@ -11,8 +11,11 @@
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
                 <img @click="fullScreenView(record.src)" :src="record.data"/>
             </div>
-            <div class="audio" v-else-if="record.mediaType == 'AUDIO'">
-                <audio controls :src="record.data"></audio>
+            <div class="audio" v-else-if="record.mediaType == 'AUDIO'" @click="playAudio">
+                <i v-if="!play" class="fa fa-play"></i>
+                <i v-else class="fa fa-pause"></i>
+                <span style="margin-left: 20px;font-size: 12px">{{audioCurrentTime}}/{{audioDuration}} s</span>
+                <audio ref="audio" :src="record.data" @canplay="audioReadyPlay"></audio>
             </div>
             <div class="text" v-else>{{record.data}}</div>
         </div>
@@ -31,8 +34,19 @@
         },
         data(){
             return {
-                avatar: require('../../assets/img/avatar.jpg')
+                avatar: require('../../assets/img/avatar.jpg'),
+
+                play: false,
+                audio: null,
+                audioCurrentTime: 0,
+                audioDuration: 0
             }
+        },
+        computed: {
+
+        },
+        mounted(){
+
         },
         methods: {
             imagePath(path){
@@ -40,6 +54,31 @@
             },
             fullScreenView(path){
                 this.$imageViewer(this.imagePath(path));
+            },
+            audioReadyPlay(){
+                this.audio = this.$refs['audio'];
+
+                this.audioCurrentTime = this.audio.currentTime;
+                this.audioDuration = this.audio.duration.toFixed(2);
+            },
+            playAudio(){
+                if(this.audio) {
+                    console.log(this.audio.currentTime)
+                    if(this.play){
+                        this.audio.pause();
+                        this.play = false;
+                    }else {
+                        this.audio.play();
+                        this.play = true;
+                        const i = setInterval(() => {
+                            if(this.audio.ended || !this.play){
+                                this.play = false;
+                                clearInterval(i);
+                            }
+                            this.audioCurrentTime = this.audio.currentTime.toFixed(2);
+                        }, 1000);
+                    }
+                }
             }
         }
     }
@@ -93,6 +132,8 @@
                 }
             }
             .audio {
+                border-radius: 5px;
+                padding: 0 10px;
 
             }
         }
@@ -112,6 +153,10 @@
                 text-align: left;
             }
             .text {
+                background: #fff;
+                color: #000;
+            }
+            .audio {
                 background: #fff;
                 color: #000;
             }
@@ -143,6 +188,9 @@
                 text-align: right;
             }
             .text {
+                background: #3fcb6e;
+            }
+            .audio {
                 background: #3fcb6e;
             }
             .text:after{

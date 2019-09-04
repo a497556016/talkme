@@ -89,8 +89,6 @@
         mounted(){
             this.reconnect();
 
-            // this.$imageViewer(require('../assets/img/avatar.jpg'));
-            // this.$alert.info('hhhhhhhhh')
         },
         methods: {
             ...chatStore.mapActions({

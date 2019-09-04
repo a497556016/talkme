@@ -5,6 +5,6 @@ export default {
         return http.get('/message/queryHisUserMessages', {params});
     },
     queryNotReceiveMessages(params){
-        return http.get('/message/queryNotReceiveMessages', {params})
+        return http.withLoading().get('/message/queryNotReceiveMessages', {params})
     }
 }

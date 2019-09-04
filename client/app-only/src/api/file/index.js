@@ -6,7 +6,7 @@ class FileService {
     }
 
     upload(type, file){
-        return http.post('/file/upload', {mediaType: type, file});
+        return http.withLoading().post('/file/upload', {mediaType: type, file});
     }
 
     fileURL(path){
