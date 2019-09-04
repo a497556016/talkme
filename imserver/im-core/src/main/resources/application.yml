@@ -12,5 +12,3 @@ spring:
 feign:
   hystrix:
     enabled: true
-file:
-  save-path: F:\picture\project\

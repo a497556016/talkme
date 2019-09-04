@@ -18,13 +18,9 @@ public class Message {
     private MessageTypes type;
     private User from;
     /**
-     * 文本消息
+     * 消息内容
      */
-    private String msg;
-    /**
-     * 缩略图base64数据
-     */
-    private String thumbnail;
+    private String data;
     /**
      * 媒体文件原始路径
      */

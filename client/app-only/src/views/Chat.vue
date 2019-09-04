@@ -34,13 +34,6 @@
         <div class="footer">
             <msg-input-bar @sendMsg="sendMsg" @clickMediaItem="showMediaBox"></msg-input-bar>
             <media-selector-box v-model="mediaBoxVisible" @selectPhoto="onSelectPhoto"></media-selector-box>
-            <!--<div class="icon"><i class="fa fa-volume-up"></i></div>
-            <div class="input">
-                <textarea rows="1" v-model="inputWords"></textarea>
-            </div>
-            <div class="icon"><i class="fa fa-smile-o"></i></div>
-            <div class="icon" v-if="!inputWords"><i class="fa fa-plus-circle"></i></div>
-            <button class="send-btn" v-if="inputWords" @click="sendMsg">发送</button>-->
         </div>
     </div>
 </template>
@@ -148,10 +141,10 @@
                 }
                 return '';
             },
-            sendMsg(type, msg, callback){
-                this.iMServer.send({
+            sendMsg(type, result, callback){
+                let message = {
                     type: 'user',
-                    msg: msg,
+                    data: result,
                     from: {
                         id: this.loginUserInfo.id,
                         // avatar: this.loginUserInfo.avatar,
@@ -164,11 +157,26 @@
                         username: this.lineUserInfo.username,
                         nickname: this.lineUserInfo.nickname
                     }
-                }).then(() => {
-                    callback('success');
-                }).catch(() => {
-                    alert('发送失败，请重试！')
-                });
+                }
+                if(type == 'text') {
+                    message.mediaType = "TEXT";
+                    this.iMServer.send(message).then(() => {
+                        callback('success');
+                    }).catch(() => {
+                        alert('发送失败，请重试！')
+                    });
+                }else if(type == 'audio') {
+                    message.mediaType = "AUDIO";
+                    fileService.upload(message.mediaType, result).then(res => {
+                        message.src = res.data.path;
+                        this.iMServer.send(message).then(() => {
+
+                        }).catch(() => {
+                            alert('发送失败，请重试！')
+                        });
+                    })
+                }
+
             },
             showActions(){
                 this.actionsVisible = true;
@@ -183,6 +191,7 @@
                         this.iMServer.send({
                             type: 'user',
                             src: res.data.path,
+                            data: res.data.thumbnail,//缩略图
                             mediaType: 'PICTURE',
                             from: {
                                 id: this.loginUserInfo.id,

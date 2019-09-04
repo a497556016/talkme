@@ -5,9 +5,9 @@ const Camera = {
         NATIVE_URI: 2
     },
     SourceType: {
-        PHOTOLIBRARY : 0,
+        PHOTO_LIBRARY : 0,
         CAMERA : 1,
-        SAVEDPHOTOALBUM : 2
+        SAVED_PHOTO_ALBUM : 2
     }
 }
 
@@ -15,7 +15,7 @@ class CameraUtil {
     options = {
         quality: 50,
         destinationType: Camera.DestinationType.DATA_URL,
-        sourceType: Camera.SourceType.PHOTOLIBRARY
+        sourceType: Camera.SourceType.PHOTO_LIBRARY
     }
     constructor(){
 
@@ -23,7 +23,7 @@ class CameraUtil {
 
     getPhoto(){
         return this.getPicture({
-            sourceType: Camera.SourceType.PHOTOLIBRARY
+            sourceType: Camera.SourceType.SAVED_PHOTO_ALBUM
         })
     }
 
@@ -43,21 +43,24 @@ class CameraUtil {
                     reject(message);
                 }, Object.assign(this.options, cameraOptions))
             }else {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
-                fileInput.onchange = function(evt, f){
-                    console.log(evt, f)
-                    const file = evt.path[0].files[0];
-                    const fr = new FileReader();
-                    fr.onload = function (e) {
-                        console.log(e)
-                        resolve(e.target.result);
+                if(this.options.sourceType != Camera.SourceType.CAMERA) {
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.onchange = function (evt, f) {
+                        console.log(evt, f)
+                        const file = evt.path[0].files[0];
+                        const fr = new FileReader();
+                        fr.onload = function (e) {
+                            console.log(e)
+                            resolve(e.target.result);
+                        }
+                        fr.readAsDataURL(file);
                     }
-                    fr.readAsDataURL(file);
+                    fileInput.click();
+                }else {
+                    reject('不支持相机模式');
                 }
-                fileInput.click();
-                // reject('不支持相机模式');
             }
         })
     }

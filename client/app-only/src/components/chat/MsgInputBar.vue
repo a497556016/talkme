@@ -1,16 +1,22 @@
 <template>
     <div class="msg-input-bar">
-        <div class="icon"><i class="fa fa-volume-up"></i></div>
+        <!--<audio controls :src="audioDataSrc"></audio>-->
+        <div class="icon" @click="changeInputType">
+            <i v-if="inputType == 0" class="fa fa-volume-up"></i>
+            <i v-if="inputType == 1" class="fa fa-keyboard-o"></i>
+        </div>
         <div class="input">
-            <textarea rows="1" v-model="inputWords"></textarea>
+            <textarea @touchstart="startRecord" @touchend="endRecord" rows="1" v-model="inputWords" :readonly="inputType == 1" :style="{'textAlign': inputType == 1?'center':'left', 'backgroundColor': talking?'#cdcdcd':''}"></textarea>
         </div>
         <div class="icon"><i class="fa fa-smile-o"></i></div>
-        <div class="icon" v-if="!inputWords" @click="showMediaBox"><i class="fa fa-plus-circle"></i></div>
-        <button class="send-btn" v-if="inputWords" @click="sendMsg">发送</button>
+        <div class="icon" v-if="inputType == 1 || !inputWords" @click="showMediaBox"><i class="fa fa-plus-circle"></i></div>
+        <button class="send-btn" v-if="inputType == 0 && inputWords" @click="sendMsg">发送</button>
     </div>
 </template>
 
 <script>
+    import MediaRecorder from "../../util/plugin/media"
+
     export default {
         name: "MsgInputBar",
         props: {
@@ -18,7 +24,15 @@
         },
         data(){
             return {
-                inputWords: ''
+                inputWords: '',
+                tempInputWords: '',
+
+                inputType: 0, //0 默认，文本 1 语音
+                talking: false,
+
+                // audioDataSrc: null,
+
+                mediaRecorder: null
             }
         },
         methods: {
@@ -30,6 +44,46 @@
             //发送媒体内容
             showMediaBox(){
                 this.$emit('clickMediaItem')
+            },
+            changeInputType(){
+                if(this.inputType == 1) {
+                    this.inputType = 0
+                    this.inputWords = this.tempInputWords;
+                } else {
+                    this.inputType = 1;
+                    this.tempInputWords = this.inputWords;
+                    this.inputWords = '按住 说话';
+                }
+            },
+            startRecord(e){
+                if(this.inputType == 1) {
+                    e.preventDefault();
+                    console.log('开始录音')
+                    this.inputWords = '松开 取消';
+                    this.talking = true;
+
+                    this.mediaRecorder = new MediaRecorder(new Date().getTime() + '.m4a', () => {
+                        this.$toast('录制完成');
+
+                    })
+                    this.mediaRecorder.startRecord();
+                }
+            },
+            endRecord(e){
+                if(this.inputType == 1) {
+                    console.log('结束录音')
+                    this.$toast('结束录音')
+                    this.inputWords = '按住 说话';
+                    this.talking = false;
+
+                    this.mediaRecorder.stopRecord();
+                    this.mediaRecorder.getBase64Data().then(result => {
+                        this.$toast('获取到录音数据'+result.substring(0, 10));
+                        // this.audioDataSrc = result;
+                        this.$emit('sendMsg', 'audio', result);
+                    });
+
+                }
             }
         }
     }
@@ -58,14 +112,15 @@
             padding: 0 10px;
             flex: 1;
             textarea {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
                 color: #333;
                 width: 100%;
                 background: #fff;
                 border: 1px solid #89b9eb;
                 border-radius: 5px;
-                height: 2.0rem;
-                margin-top: 10px;
+                line-height: 1;
+                margin-top: 12px;
+                padding: 10px 5px;
             }
         }
 

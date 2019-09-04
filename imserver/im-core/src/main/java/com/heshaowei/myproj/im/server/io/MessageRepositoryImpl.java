@@ -30,6 +30,9 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
 
     @Override
     public int save(Message message) {
+        //只保存源路径，不保存base64数据
+        message.setData(null);
+
         String json = GsonUtil.get().toJson(message);
         Result r = null;
         if(message instanceof UserMessage) {
@@ -38,8 +41,10 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
         if(message instanceof GroupMessage) {
             r = this.messageClient.saveGroupMessage(json);
         }
-        if(null != r){
-            return r.getCode();
+        //保存失败，重新放进去
+        if(null != r && r.getCode() == 0){
+            log.error(GsonUtil.get().toJson(message) + "保存失败！");
+            this.push(message);
         }
         return 0;
     }
@@ -48,19 +53,21 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
     public void run() {
         //轮询检查是否有新的消息，有就调用远程元数据服务保存
         while(true) {
-            log.debug("轮询检查需要保存的消息："+messages.size());
+            log.info("轮询检查需要保存的消息："+messages.size());
 
             if(messages.isEmpty()){
+                //间隔时间
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 continue;
             }
 
             //取出第一个消息
             Message message = messages.remove(0);
-            int code = this.save(message);
-            //保存失败，重新放进去
-            /*if(code == 0){
-                messages.add(message);
-            }*/
+            this.save(message);
 
             //间隔时间
             try {
@@ -74,5 +81,33 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
     @PostConstruct
     private void init(){
         new Thread(this).start();
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        List<Integer> is = Lists.newArrayList();
+        new Thread(() -> {
+            while(true) {
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if(is.isEmpty()){
+                    continue;
+                }
+
+                int i = is.remove(0);
+                System.out.println(i);
+            }
+        }).start();
+
+
+
+        for (int i = 0; i < 5; i++) {
+            Thread.sleep(5000);
+            is.add(i);
+        }
     }
 }

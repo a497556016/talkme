@@ -9,9 +9,12 @@
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
 
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
-                <img @click="fullScreenView(record.src)" :src="record.thumbnail"/>
+                <img @click="fullScreenView(record.src)" :src="record.data"/>
             </div>
-            <div class="text" v-else>{{record.msg}}</div>
+            <div class="audio" v-else-if="record.mediaType == 'AUDIO'">
+                <audio controls :src="record.data"></audio>
+            </div>
+            <div class="text" v-else>{{record.data}}</div>
         </div>
     </div>
 </template>
@@ -88,6 +91,9 @@
                     /*max-width: 100%;*/
                     max-height: 180px;
                 }
+            }
+            .audio {
+
             }
         }
 

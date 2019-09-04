@@ -1,5 +1,7 @@
 package com.heshaowei.myproj.im.server.io;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.heshaowei.myproj.im.server.enums.MessageStates;
@@ -26,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import sun.misc.BASE64Encoder;
 
+import java.io.IOException;
 import java.util.Date;
 
 public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
@@ -34,7 +37,6 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyChannelHandler.class);
 
     private String URI = "websocket";
-    private String fileSavePath;
 
     private WebSocketServerHandshaker handshaker ;
 
@@ -44,11 +46,6 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
 
     public MyChannelHandler withURI(String uri){
         this.URI = uri;
-        return this;
-    }
-
-    public MyChannelHandler withFileSavePath(String fileSavePath){
-        this.fileSavePath = fileSavePath;
         return this;
     }
 
@@ -180,22 +177,19 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
         }
         //可以对消息进行处理
         String text = ((TextWebSocketFrame) msg).text();
-        JsonObject jo = new JsonParser().parse(text).getAsJsonObject();
-        String type = jo.get("type").getAsString();
+
+        String type = null;
+        String msgJson = null;
+        int splitIndex = text.indexOf(";");
+        if(splitIndex > -1){
+            type = text.substring(0, splitIndex);
+            msgJson = text.substring(splitIndex+1);
+        }
         if(null == type){
             throw new UnsupportedOperationException("不支持的消息格式");
         }
         if(MessageTypes.USER.getValue().equals(type)) {
-            UserMessage m = UserMessage.buildFromJson(text);
-            if(null != this.fileSavePath) {
-                try {
-                    byte[] buffer = new ImageHandler(this.fileSavePath + m.getSrc()).scaleW(100).writeToBytes();
-                    String base64 = new BASE64Encoder().encode(buffer);
-                    m.setThumbnail("data:image/jpeg;base64," + base64);
-                } catch (Exception e) {
-
-                }
-            }
+            UserMessage m = UserMessage.buildFromJson(msgJson);
 
             Channel channel = GlobalUserUtil.getChannel(m.getTo().getUsername());
             if(null != channel) {
@@ -223,7 +217,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
 
         }
         if(MessageTypes.GROUP.getValue().equals(type)) {
-            GroupMessage gm = GroupMessage.buildFromJson(text);
+            GroupMessage gm = GroupMessage.buildFromJson(msgJson);
 
             handlerMessage(gm, ctx);
         }
@@ -274,7 +268,7 @@ public class MyChannelHandler extends SimpleChannelInboundHandler<Object> {
         ctx.attr(AttributeKey.valueOf("type")).set(uri);
         //可以通过url获取其他参数
         WebSocketServerHandshakerFactory factory = new WebSocketServerHandshakerFactory(
-                "ws://"+msg.headers().get("Host")+"/"+URI+"",null,false
+                "ws://"+msg.headers().get("Host")+"/"+URI+"",null,false, 1*1024*1024
         );
         handshaker = factory.newHandshaker(msg);
         if(handshaker == null){

@@ -31,6 +31,7 @@ function init() {
     store
   }).$mount('#app')
 }
+// alert(navigator.platform)
 if(navigator.platform == 'Win32'){
   init();
 }else {

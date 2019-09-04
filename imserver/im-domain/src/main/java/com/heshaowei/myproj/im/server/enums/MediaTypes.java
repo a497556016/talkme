@@ -1,6 +1,8 @@
 package com.heshaowei.myproj.im.server.enums;
 
 public enum MediaTypes {
+    //文本
+    TEXT(),
     //图片
     PICTURE(),
     //视频

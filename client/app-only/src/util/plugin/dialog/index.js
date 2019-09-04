@@ -18,8 +18,8 @@ function DialogBuilder(Vue) {
             options.dialogType = '2';
             this.install(options, Dialog);
         },
-        installToast(msg, timeout, options){
-            this.install(Object.assign({msg, timeout}, options), Toast);
+        installToast(msg, options){
+            this.install(Object.assign({msg}, options), Toast);
         },
         installImage(src, options){
             this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);

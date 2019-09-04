@@ -65,7 +65,7 @@ class IMServer {
     send(message){
         return new Promise((resolve, reject) => {
             if(this.ws.readyState == 1){
-                this.ws.send(JSON.stringify(message));
+                this.ws.send(message.type+';'+JSON.stringify(message));
                 resolve();
             }else {
                 reject()
