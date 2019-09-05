@@ -5,9 +5,13 @@
                 <div class="icon fa fa-file-image-o"></div>
                 <div class="text">相册</div>
             </div>
-            <div class="cell">
+            <div class="cell" @click="takePhoto">
                 <div class="icon fa fa-camera-retro"></div>
-                <div class="text">拍摄</div>
+                <div class="text">拍照</div>
+            </div>
+            <div class="cell" @click="takeVideo">
+                <div class="icon fa fa-camera-retro"></div>
+                <div class="text">录像</div>
             </div>
             <div class="cell">
                 <div class="icon fa fa-file"></div>
@@ -36,6 +40,18 @@
             choosePhotos(){
                 cameraUtil.getPhoto().then(data => {
                     this.$emit('selectPhoto', data);
+                    this.cancel();
+                })
+            },
+            takePhoto(){
+                cameraUtil.takePhoto().then(data => {
+                    this.$emit('selectPhoto', data);
+                    this.cancel();
+                })
+            },
+            takeVideo(){
+                cameraUtil.takeVideo().then(data => {
+                    this.$emit('takeVideo', data);
                     this.cancel();
                 })
             }

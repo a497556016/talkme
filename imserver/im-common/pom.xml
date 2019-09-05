@@ -27,6 +27,14 @@
             <artifactId>bson</artifactId>
             <!--<scope>provided</scope>-->
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv-platform -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv-platform</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+
+
 
 
     </dependencies>

@@ -1,13 +1,16 @@
 <template>
     <div class="dialog" ref="dialog">
         <div class="modal"></div>
-        <div class="panel" @click="close()" align="center">
+        <div class="panel" align="center">
             <template v-if="dialogType == '1'">
                 <alert :msgType="msgType" :msg="msg"></alert>
             </template>
             <template v-else-if="dialogType == '2'"></template>
             <template v-else-if="dialogType == '3'">
-                <image-viewer :src="msg" @click="close()"></image-viewer>
+                <image-viewer :src="msg" @close="close()"></image-viewer>
+            </template>
+            <template v-else-if="dialogType == '4'">
+                <video-player :src="msg" @close="close()"></video-player>
             </template>
         </div>
 
@@ -16,10 +19,11 @@
 
 <script>
     import Alert from "./Alert";
-    import ImageViewer from "./ImageViewer";
+    import ImageViewer from "../../../components/players/ImageViewer";
+    import VideoPlayer from "../../../components/players/VideoPlayer";
     export default {
         name: "Index",
-        components: {ImageViewer, Alert},
+        components: {VideoPlayer, ImageViewer, Alert},
         data(){
             return {
                 dialogType: '1',
@@ -61,6 +65,10 @@
             right: 0;
             bottom: 0;
             z-index: 100;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
     }

@@ -26,6 +26,10 @@ public class Message {
      */
     private String src;
     /**
+     * 缩略图片路径
+     */
+    private String thumbnail;
+    /**
      * 媒体类型
      */
     private MediaTypes mediaType;

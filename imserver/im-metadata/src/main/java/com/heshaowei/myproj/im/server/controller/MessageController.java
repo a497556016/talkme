@@ -48,7 +48,7 @@ public class MessageController {
         if(null != loginUsername && null != lineUsername) {
             Sort sort = Sort.by(Sort.Direction.DESC,"time");
             Page<UserMessage> page = this.userMessageRepository.selectHisUserMessages(loginUsername, lineUsername, PageRequest.of(0, 10, sort));
-            page.getContent().forEach(m -> toBase64DataFromSource(m));
+//            page.getContent().forEach(m -> toBase64DataFromSource(m));
             return Result.success(page);
         }
         return Result.error();
@@ -62,7 +62,7 @@ public class MessageController {
             //修改状态
             page.getContent().forEach(m -> m.setSendState(MessageStates.SUCCESS));
             this.userMessageRepository.saveAll(page.getContent());
-            page.getContent().forEach(m -> toBase64DataFromSource(m));
+//            page.getContent().forEach(m -> toBase64DataFromSource(m));
             return Result.success(page);
         }
         return Result.error();
@@ -77,7 +77,7 @@ public class MessageController {
             if(MediaTypes.AUDIO.equals(m.getMediaType())){
                 String base64 = FileConvertUtil.toBase64(fileProperty.getFileSavePath() + m.getSrc(), "audio/mpeg");
                 m.setData(base64);
-            }else if(MediaTypes.PICTURE.equals(m.getMediaType())) {
+            }/*else if(MediaTypes.PICTURE.equals(m.getMediaType())) {
                 try {
                     byte[] buffer = new ImageHandler(fileProperty.getFileSavePath() + m.getSrc()).scaleW(100).writeToBytes();
                     String base64 = new BASE64Encoder().encode(buffer);
@@ -85,14 +85,14 @@ public class MessageController {
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-            }
+            }*/
         }
     }
 
     @PostMapping("/saveUserMessage")
     public Result saveUserMessage(@RequestParam("message") String messageJson){
         UserMessage message = GsonUtil.get().fromJson(messageJson, UserMessage.class);
-        if((MediaTypes.PICTURE.equals(message.getMediaType())||MediaTypes.AUDIO.equals(message.getMediaType()))
+        if(!MediaTypes.TEXT.equals(message.getMediaType())
                 &&!StringUtils.isBlank(message.getData())){
             //处理base64字符串在传输过程中丢失“+”号的问题
             message.setData(message.getData().replaceAll(" ", "+"));

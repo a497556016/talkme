@@ -32,10 +32,12 @@ function init() {
   }).$mount('#app')
 }
 // alert(navigator.platform)
-if(navigator.platform == 'Win32'){
+if('undefined' == typeof cordova || navigator.platform == 'Win32'){
+  Vue.prototype.isApp = false;
   init();
 }else {
   document.addEventListener('deviceready', function () {
+    Vue.prototype.isApp = true;
     init();
   }, false)
 }

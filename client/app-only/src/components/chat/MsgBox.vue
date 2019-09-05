@@ -9,13 +9,25 @@
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
 
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
-                <img @click="fullScreenView(record.src)" :src="record.data"/>
+                <img @click="fullScreenView(record.src)" :src="fullPath(record.thumbnail)"/>
             </div>
-            <div class="audio" v-else-if="record.mediaType == 'AUDIO'" @click="playAudio">
-                <i v-if="!play" class="fa fa-play"></i>
-                <i v-else class="fa fa-pause"></i>
+            <div class="audio" v-else-if="record.mediaType == 'AUDIO'">
+                <span @click="playAudio">
+                    <i v-if="!play" class="fa fa-play-circle-o"></i>
+                    <i v-else class="fa fa-pause-circle-o"></i>
+                </span>
+                <span @click="stopAudio" style="margin-left: 10px">
+                    <i class="fa fa-stop-circle-o"></i>
+                </span>
+
                 <span style="margin-left: 20px;font-size: 12px">{{audioCurrentTime}}/{{audioDuration}} s</span>
-                <audio ref="audio" :src="record.data" @canplay="audioReadyPlay"></audio>
+                <audio ref="audio" :src="fullPath(record.src)" @canplay="audioReadyPlay"></audio>
+            </div>
+            <div class="picture" v-else-if="record.mediaType == 'VIDEO'">
+                <img :src="fullPath(record.thumbnail)">
+                <div @click="playVideo" class="video-controls">
+                    <i class="fa fa-play-circle-o"></i>
+                </div>
             </div>
             <div class="text" v-else>{{record.data}}</div>
         </div>
@@ -49,11 +61,11 @@
 
         },
         methods: {
-            imagePath(path){
+            fullPath(path){
                 return fileService.fileURL(path);
             },
             fullScreenView(path){
-                this.$imageViewer(this.imagePath(path));
+                this.$imageViewer(this.fullPath(path));
             },
             audioReadyPlay(){
                 this.audio = this.$refs['audio'];
@@ -79,6 +91,15 @@
                         }, 1000);
                     }
                 }
+            },
+            stopAudio(){
+                if(this.audio) {
+                    this.audio.load();
+                    this.play = false;
+                }
+            },
+            playVideo(){
+                this.$videoPlayer(this.fullPath(this.record.src));
             }
         }
     }
@@ -126,15 +147,33 @@
                 width: 100%;
                 display: inline-block;
                 overflow: hidden;
+                position: relative;
                 img{
                     /*max-width: 100%;*/
                     max-height: 180px;
+                }
+                .video-controls {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    -webkit-transform: translate(-50%, -60%);
+                    transform: translate(-50%, -60%);
+                    color: white;
+                    font-size: 50px;
                 }
             }
             .audio {
                 border-radius: 5px;
                 padding: 0 10px;
+                font-size: 25px;
+                display: flex;
+            }
 
+            .video {
+                max-width: 150px;
+                video{
+                    width: 100%;
+                }
             }
         }
 

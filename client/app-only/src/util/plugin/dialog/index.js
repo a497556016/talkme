@@ -23,11 +23,24 @@ function DialogBuilder(Vue) {
             this.install(Object.assign({msg}, options), Toast);
         },
         installImage(src, options){
-            this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);
+            options = options || {};
+            // Vue.prototype.$toast(Vue.prototype.isApp)
+            if(Vue.prototype.isApp){
+                PhotoViewer.show(src, options.title, {share: true})
+            }else {
+                this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);
+            }
         },
 
         installLoadingMask(msg, options){
             this.install(Object.assign({msg}, options), LoadingMask);
+        },
+
+        installVideoPlayer(src, options){
+            options = options || {};
+            options.msg = src;
+            options.dialogType = '4';
+            this.install(options, Dialog);
         },
 
         install(options, comp){
@@ -67,5 +80,7 @@ export default {
                 }
             }
         }
+
+        Vue.prototype.$videoPlayer = db.installVideoPlayer.bind(db);
     }
 }

@@ -3,6 +3,8 @@ package com.heshaowei.myproj.utils.image;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -10,8 +12,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.Iterator;
 
 /**
  * 图像处理类.
@@ -23,28 +26,48 @@ public class ImageHandler {
 
     String openUrl; // 原始图片打开路径
     String saveUrl; // 新图保存路径
-    String saveName; // 新图名称
     String suffix; // 新图类型 只支持gif,jpg,png
 
-    public ImageHandler(String openUrl, String saveUrl, String saveName, String suffix) throws Exception {
+    public ImageHandler(String openUrl, String saveUrl, String suffix) throws Exception {
         this.openUrl = openUrl;
-        this.saveName = saveName;
         this.saveUrl = saveUrl;
         this.suffix = suffix;
 
         setBufferedImage();
     }
 
-    public ImageHandler(String openUrl) throws Exception {
+    public ImageHandler(String openUrl, String saveUrl) throws Exception {
         this.openUrl = openUrl;
-
-        if (StringUtils.isNotEmpty(openUrl) && openUrl.contains(".")) {
-            int index = openUrl.lastIndexOf(".");
-            this.suffix = openUrl.substring(index + 1);
-        }
+        this.saveUrl = saveUrl;
+        this.suffix = this.getImageFormatName(openUrl);
 
         setBufferedImage();
     }
+
+
+    /**
+     * 获取图片格式
+     * @param openUrl   图片文件
+     * @return    图片格式
+     */
+    public String getImageFormatName(String openUrl)throws IOException{
+        File file = new File(openUrl);
+        String formatName = null;
+
+        ImageInputStream iis = ImageIO.createImageInputStream(file);
+        Iterator<ImageReader> imageReader =  ImageIO.getImageReaders(iis);
+        if(imageReader.hasNext()){
+            ImageReader reader = imageReader.next();
+            formatName = reader.getFormatName();
+        }
+
+        if(null != formatName) {
+            formatName = formatName.toLowerCase();
+        }
+
+        return formatName;
+    }
+
 
     private void setBufferedImage() throws Exception {
         /*File file = new File(openUrl);
@@ -97,12 +120,6 @@ public class ImageHandler {
         return suffix;
     }
 
-    private String getSaveName() {
-        if (StringUtils.isEmpty(saveName)) {
-            return UUID.randomUUID().toString();
-        }
-        return saveName;
-    }
 
     public int getWidth() {
         return this.bufferedImage.getWidth();
@@ -117,10 +134,13 @@ public class ImageHandler {
             throw new RuntimeException("没有指定图片保存路径！");
         }
 
-        File sf = new File(saveUrl, getSaveName() + "." + getSuffix());
+        int lastIndex = saveUrl.lastIndexOf(File.separatorChar);
+        String path = saveUrl.substring(0, lastIndex);
+        String name = saveUrl.substring(lastIndex+1);
+        File sf = new File(path, name);
         try {
-            if (sf.exists() || sf.mkdirs()) {
-                ImageIO.write(this.bufferedImage, suffix, sf); // 保存图片
+            if (sf.getParentFile().exists() || sf.getParentFile().mkdirs()) {
+                ImageIO.write(this.bufferedImage, getSuffix(), sf); // 保存图片
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,7 +332,7 @@ public class ImageHandler {
     }
 
     public static void main(String[] args) throws Exception {
-        ImageHandler imageDeal = new ImageHandler("f://a.jpg", "f://", "b", "jpg");
+        ImageHandler imageDeal = new ImageHandler("f://a.jpg", "f://b.jpg", "jpg");
         // 测试缩放
         System.out.println(imageDeal.scaleH(100).writeToFile());
         // 测试旋转

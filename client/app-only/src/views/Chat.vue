@@ -33,7 +33,7 @@
 
         <div class="footer">
             <msg-input-bar @sendMsg="sendMsg" @clickMediaItem="showMediaBox"></msg-input-bar>
-            <media-selector-box v-model="mediaBoxVisible" @selectPhoto="onSelectPhoto"></media-selector-box>
+            <media-selector-box v-model="mediaBoxVisible" @selectPhoto="data => onSelectMedia('PICTURE', data)" @takePhoto="data => onSelectMedia('PICTURE', data)" @takeVideo="data => onSelectMedia('VIDEO', data)"></media-selector-box>
         </div>
     </div>
 </template>
@@ -142,7 +142,6 @@
             sendMsg(type, result, callback){
                 let message = {
                     type: 'user',
-                    data: result,
                     from: {
                         id: this.loginUserInfo.id,
                         // avatar: this.loginUserInfo.avatar,
@@ -158,6 +157,7 @@
                 }
                 if(type == 'text') {
                     message.mediaType = "TEXT";
+                    message.data = result;
                     this.iMServer.send(message).then(() => {
                         callback('success');
                     }).catch(() => {
@@ -182,15 +182,15 @@
             showMediaBox(){
                 this.mediaBoxVisible = true;
             },
-            onSelectPhoto(data){
+            onSelectMedia(type, data){
                 //上传文件
-                fileService.upload('PICTURE', data).then((res) => {
+                fileService.upload(type, data).then((res) => {
                     if(res.code == 1) {
                         this.iMServer.send({
                             type: 'user',
                             src: res.data.path,
-                            data: res.data.thumbnail,//缩略图
-                            mediaType: 'PICTURE',
+                            thumbnail: res.data.thumbnail,//缩略图
+                            mediaType: type,
                             from: {
                                 id: this.loginUserInfo.id,
                                 // avatar: this.loginUserInfo.avatar,
@@ -206,7 +206,6 @@
                         })
                     }
                 })
-
             }
         }
     }

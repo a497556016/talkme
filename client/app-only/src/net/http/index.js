@@ -9,8 +9,8 @@ interceptor(axios);
 axios.defaults.timeout = 10000;   // 超时时间
 axios.defaults.baseURL = 'http://192.168.0.171:8081/';  // 默认地址
 
-axios.withLoading = function () {
-    Vue.prototype.$loading.mask('正在传输数据...')
+axios.withLoading = function (msg) {
+    Vue.prototype.$loading.mask(msg||'加载中...')
     return this;
 }
 

@@ -3,6 +3,7 @@ package com.heshaowei.myproj.im.server.io;
 import com.google.common.collect.Lists;
 import com.heshaowei.myproj.bean.response.Result;
 import com.heshaowei.myproj.im.metadata.client.controller.MessageClient;
+import com.heshaowei.myproj.im.server.enums.MediaTypes;
 import com.heshaowei.myproj.im.server.model.GroupMessage;
 import com.heshaowei.myproj.im.server.model.Message;
 import com.heshaowei.myproj.im.server.model.UserMessage;
@@ -31,7 +32,9 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
     @Override
     public int save(Message message) {
         //只保存源路径，不保存base64数据
-        message.setData(null);
+        if(!MediaTypes.TEXT.equals(message.getMediaType())) {
+            message.setData(null);
+        }
 
         String json = GsonUtil.get().toJson(message);
         Result r = null;
@@ -55,31 +58,26 @@ public class MessageRepositoryImpl implements MessageRepository, Runnable {
         while(true) {
             log.info("轮询检查需要保存的消息："+messages.size());
 
+            //间隔时间
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             if(messages.isEmpty()){
-                //间隔时间
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 continue;
             }
 
             //取出第一个消息
             Message message = messages.remove(0);
             this.save(message);
-
-            //间隔时间
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 
-    @PostConstruct
-    private void init(){
+//    @PostConstruct
+    public void init(){
         new Thread(this).start();
     }
 

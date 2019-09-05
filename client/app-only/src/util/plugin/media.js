@@ -1,9 +1,11 @@
+import Vue from 'vue'
+
 class MediaRecorder {
     path;//文件路径
 
 
     constructor(fileName, callback) {
-        if(navigator.platform == 'Win32') {
+        if(!Vue.prototype.isApp) {
             alert('设备不支持！');
             return;
         }

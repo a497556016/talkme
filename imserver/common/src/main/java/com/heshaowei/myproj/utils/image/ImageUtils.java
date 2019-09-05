@@ -80,15 +80,15 @@ public class ImageUtils {
         }
     }
 
-    public static String zoom(String file, int w, int h) throws Exception {
-        return new ImageHandler(file).zoom(w, h).writeToFile();
+    public static String zoom(String file, String savePath, int w, int h) throws Exception {
+        return new ImageHandler(file, savePath).zoom(w, h).writeToFile();
     }
 
-    public static String scaleW(String file, int w) throws Exception {
-        return new ImageHandler(file).scaleW(w).writeToFile();
+    public static String scaleW(String file, String savePath, int w) throws Exception {
+        return new ImageHandler(file, savePath).scaleW(w).writeToFile();
     }
 
-    public static String scaleH(String file, int h) throws Exception {
-        return new ImageHandler(file).scaleH(h).writeToFile();
+    public static String scaleH(String file, String savePath, int h) throws Exception {
+        return new ImageHandler(file, savePath).scaleH(h).writeToFile();
     }
 }  
