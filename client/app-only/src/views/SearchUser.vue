@@ -1,6 +1,6 @@
 <template>
     <div class="search-user">
-        <div class="search-bar">
+        <div class="search-bar im-form">
             <input class="im-input" v-model="searchWords"/>
             <button class="im-button im-button-primary" @click="searchUser(searchWords)">搜索</button>
         </div>
@@ -24,6 +24,9 @@
             return {
                 searchWords: ''
             }
+        },
+        mounted(){
+            this.searchUser();
         },
         computed: {
             ...userStore.mapGetters({

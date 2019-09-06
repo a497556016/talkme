@@ -61,7 +61,22 @@ class CameraUtil {
         return new Promise((resolve, reject) => {
             if(navigator.camera){
                 navigator.camera.getPicture((data) => {
-                    resolve(data);
+                    if(!data.startsWith("/storage")) {
+                        resolve(data);
+                    }else {
+                        // alert(data);
+                        window.resolveLocalFileSystemURL('file:///' + data, fileEntry => {
+                            fileEntry.file((file) => {
+                                const reader = new FileReader();
+                                reader.onloadend = function(e) {
+                                    const content = this.result;
+                                    resolve(content);
+                                };
+                                // The most important point, use the readAsDatURL Method from the file plugin
+                                reader.readAsDataURL(file);
+                            });
+                        })
+                    }
                 }, message => {
                     alert(message)
                     reject(message);

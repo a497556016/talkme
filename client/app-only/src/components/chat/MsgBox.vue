@@ -3,7 +3,7 @@
         <div style="margin: 5px"></div>
         <img class="avatar" v-if="type == 'right' && (!loginUser || !loginUser.avatar)" :src="avatar">
         <img class="avatar" v-else-if="type == 'left' && (!lineUser || !lineUser.avatar)" :src="avatar">
-        <img class="avatar" v-else :src="type == 'left'?lineUser.avatar:loginUser.avatar"/>
+        <img class="avatar" v-else :src="type == 'left'?fullPath(lineUser.avatar):fullPath(loginUser.avatar)"/>
 
         <div class="text-box" >
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
@@ -99,7 +99,9 @@
                 }
             },
             playVideo(){
-                this.$videoPlayer(this.fullPath(this.record.src));
+                this.$videoPlayer(this.fullPath(this.record.src), {
+                    poster: this.fullPath(this.record.thumbnail)
+                });
             }
         }
     }

@@ -10,7 +10,7 @@
                 <image-viewer :src="msg" @close="close()"></image-viewer>
             </template>
             <template v-else-if="dialogType == '4'">
-                <video-player :src="msg" @close="close()"></video-player>
+                <video-player :src="msg" :poster="poster" @close="close()"></video-player>
             </template>
         </div>
 
@@ -29,7 +29,8 @@
                 dialogType: '1',
                 msgType: '1',
 
-                msg: null
+                msg: null,
+                poster: null
             }
         },
         methods: {

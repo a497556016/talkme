@@ -1,21 +1,22 @@
-const url = 'ws://192.168.0.171:8000/test';
-
+import Vue from 'vue'
 import store from '../../store'
 import {chat as chatTypes, user as userTypes} from '../../store/types'
+import {SOCKET_URI} from "../../config"
 
 class IMServer {
     url;
     ws;
+    loginUser;
 
-    constructor(url) {
-        this.url = url;
+    constructor() {
+        this.url = `ws://${SOCKET_URI}`;
         // this.init();
     }
 
     init(){
-        const loginUser = store.getters['user/'+userTypes.GET_LOGIN_USER];
+        this.loginUser = store.getters['user/'+userTypes.GET_LOGIN_USER];
 
-        this.ws = new WebSocket(this.url+'/'+loginUser.token);
+        this.ws = new WebSocket(this.url+'/'+this.loginUser.token);
         this.ws.onopen = () => this.onopen();
         this.ws.onmessage = (evt) => this.onmessage(evt);
         this.ws.onclose = () => this.onclose();
@@ -37,9 +38,18 @@ class IMServer {
     }
 
     onmessage(evt){
-        const msg = evt.data;
-        store.dispatch('chat/'+chatTypes.ADD_CHAT_RECORD, JSON.parse(msg));
+        const msg = JSON.parse(evt.data);
+        store.dispatch('chat/'+chatTypes.ADD_CHAT_RECORD, msg);
         console.log(evt);
+
+        if(Vue.prototype.isOnApp && msg.to.username == this.loginUser.username){
+            cordova.plugins.notification.local.schedule({
+                id: Math.random(),
+                title: 'TalkMe消息',
+                text: msg.mediaType == 'TEXT'?msg.data:'【媒体消息】',
+                foreground: true
+            });
+        }
     }
 
     reconnectTimes = 0;
@@ -84,4 +94,4 @@ class IMServer {
 
 }
 
-export default new IMServer(url);
+export default new IMServer();

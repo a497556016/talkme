@@ -5,7 +5,7 @@ class MediaRecorder {
 
 
     constructor(fileName, callback) {
-        if(!Vue.prototype.isApp) {
+        if(!Vue.prototype.isOnApp) {
             alert('设备不支持！');
             return;
         }

@@ -3,13 +3,9 @@ package com.heshaowei.myproj.base;
 import com.google.common.base.Converter;
 import com.google.common.collect.Lists;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.util.ReflectionUtils;
-import sun.reflect.generics.reflectiveObjects.TypeVariableImpl;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MyConverter<A extends MyConverter, B> extends Converter<A, B> {

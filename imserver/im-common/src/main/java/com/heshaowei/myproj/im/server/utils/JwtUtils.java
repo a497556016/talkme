@@ -1,10 +1,10 @@
 package com.heshaowei.myproj.im.server.utils;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import io.jsonwebtoken.*;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 
@@ -72,7 +72,7 @@ public class JwtUtils {
         return checkResult;
     }
     public static SecretKey generalKey() {
-        byte[] encodedKey = Base64.decode(JWT_SECERT);
+        byte[] encodedKey = Base64.getDecoder().decode(JWT_SECERT);
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
     }

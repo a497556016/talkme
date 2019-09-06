@@ -2,7 +2,7 @@
     <div class="image-viewer">
         <div class="close" @click="close"><i class="fa fa-times-circle-o"></i></div>
         <div class="img">
-            <img :src="src"/>
+            <img ref="img" :src="src" @load="onLoad"/>
         </div>
 
     </div>
@@ -14,9 +14,17 @@
         props: {
             src: String
         },
+        mounted(){
+            this.$setBackAction(() => {
+                this.close();
+            }, this);
+        },
         methods: {
             close(){
                 this.$emit('close');
+            },
+            onLoad(){
+                // this.$refs.img.requestFullscreen();
             }
         }
     }

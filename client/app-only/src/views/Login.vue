@@ -1,6 +1,6 @@
 <template>
     <div class="login-page">
-        <div class="form">
+        <div class="im-form login-panel">
             <div class="im-form-item">
                 <label class="im-label">用户名</label>
                 <input class="im-input" v-model="user.username"/>
@@ -47,7 +47,7 @@
         height: 100%;
         /*background: #d2dde6;*/
 
-        .form {
+        .login-panel {
             text-align: center;
             padding: 100px 25px 0 25px;
 

@@ -1,7 +1,7 @@
 <template>
     <div class="video-player">
         <div class="close" @click="close"><i class="fa fa-times-circle-o"></i></div>
-        <video controls :src="src"></video>
+        <video ref="video" controls :src="src" :poster="poster" autoplay width="100%"></video>
     </div>
 </template>
 
@@ -9,7 +9,13 @@
     export default {
         name: "VideoPlayer",
         props: {
-            src: String
+            src: String,
+            poster: String
+        },
+        mounted(){
+            this.$setBackAction(() => {
+                this.close();
+            }, this);
         },
         methods: {
             close(){

@@ -25,7 +25,7 @@ function DialogBuilder(Vue) {
         installImage(src, options){
             options = options || {};
             // Vue.prototype.$toast(Vue.prototype.isApp)
-            if(Vue.prototype.isApp){
+            if(Vue.prototype.isOnApp){
                 PhotoViewer.show(src, options.title, {share: true})
             }else {
                 this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);

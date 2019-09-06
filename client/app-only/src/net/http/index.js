@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Vue from 'vue'
+import {BASE_URL} from "../../config"
 
 import interceptor from '../interceptor'
 
@@ -7,7 +8,7 @@ interceptor(axios);
 
 // axios默认配置
 axios.defaults.timeout = 10000;   // 超时时间
-axios.defaults.baseURL = 'http://192.168.0.171:8081/';  // 默认地址
+axios.defaults.baseURL = BASE_URL;  // 默认地址
 
 axios.withLoading = function (msg) {
     Vue.prototype.$loading.mask(msg||'加载中...')

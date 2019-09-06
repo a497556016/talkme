@@ -24,7 +24,15 @@ Vue.prototype.iMServer = iMServer;
 
 console.log(navigator)
 
+const BACK_ACTIONS = [];
 function init() {
+  Vue.prototype.$setBackAction = function (callFunc, scope) {
+    BACK_ACTIONS.push({
+      func: callFunc,
+      scope: scope
+    });
+  };
+
   new Vue({
     render: h => h(App),
     router,
@@ -33,11 +41,43 @@ function init() {
 }
 // alert(navigator.platform)
 if('undefined' == typeof cordova || navigator.platform == 'Win32'){
-  Vue.prototype.isApp = false;
+  Vue.prototype.isOnApp = false;
   init();
 }else {
   document.addEventListener('deviceready', function () {
-    Vue.prototype.isApp = true;
+    Vue.prototype.isOnApp = true;
     init();
+  }, false)
+
+  //返回键退出点击次数
+  let exitClicks = 0;
+  document.addEventListener('backbutton', function () {
+    const url = location.href;
+    const urls = url.split("#");
+    const baseURL = urls[0];
+    const path = urls[1];
+    Vue.prototype.$toast(path);
+
+    if(BACK_ACTIONS.length != 0) {
+      const actionFunc = BACK_ACTIONS.pop();
+      actionFunc.func.call(actionFunc.scope);
+    }else if("/chat" === path || "/login" === path) {
+      if (exitClicks === 0) {
+        Vue.prototype.$toast('再按一次退出', {timeout: 1000});
+        setTimeout(() => exitClicks = 0, 1000);
+      } else {
+        // navigator.app.exitApp();
+        navigator.Backbutton.goHome(function () {
+          Vue.prototype.$toast('TalkMe将在后台运行', {timeout: 1000});
+        }, function () {
+          Vue.prototype.$toast('TalkMe返回后台运行出了点问题', {timeout: 1000});
+        });
+
+      }
+      exitClicks += 1;
+
+    }else {
+      window.history.back();
+    }
   }, false)
 }
