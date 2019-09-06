@@ -5,10 +5,12 @@ Vue.use(Vuex);
 
 import user from './user'
 import chat from './chat'
+import file from './file'
 
 export default new Vuex.Store({
     modules: {
         user,
-        chat
+        chat,
+        file
     }
 })

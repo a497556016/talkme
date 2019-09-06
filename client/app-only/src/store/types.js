@@ -25,3 +25,7 @@ export const chat = {
 
     CLEAR_CHAT_RECORDS: "CLEAR_CHAT_RECORDS"
 }
+
+export const file = {
+    GET_BASE64_FILE: "GET_BASE64_FILE"
+}

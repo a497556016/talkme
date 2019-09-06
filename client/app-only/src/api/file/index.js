@@ -13,6 +13,14 @@ class FileService {
         const url = http.defaults.baseURL + '/file/download?path='+encodeURI(path);
         return url;
     }
+
+    base64(path){
+        return http.get('/file/base64', {
+            params: {
+                path: encodeURI(path)
+            }
+        })
+    }
 }
 
 export default new FileService();

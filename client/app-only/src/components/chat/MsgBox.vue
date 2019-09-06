@@ -3,13 +3,13 @@
         <div style="margin: 5px"></div>
         <img class="avatar" v-if="type == 'right' && (!loginUser || !loginUser.avatar)" :src="avatar">
         <img class="avatar" v-else-if="type == 'left' && (!lineUser || !lineUser.avatar)" :src="avatar">
-        <img class="avatar" v-else :src="type == 'left'?fullPath(lineUser.avatar):fullPath(loginUser.avatar)"/>
+        <img class="avatar" v-else :src="type == 'left'?lineUserAvatar:loginUserAvatar"/>
 
         <div class="text-box" >
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
 
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
-                <img @click="fullScreenView(record.src)" :src="fullPath(record.thumbnail)"/>
+                <img @click="fullScreenView(record.src)" :src="thumbnailImage"/>
             </div>
             <div class="audio" v-else-if="record.mediaType == 'AUDIO'">
                 <span @click="playAudio">
@@ -21,10 +21,10 @@
                 </span>
 
                 <span style="margin-left: 20px;font-size: 12px">{{audioCurrentTime}}/{{audioDuration}} s</span>
-                <audio ref="audio" :src="fullPath(record.src)" @canplay="audioReadyPlay"></audio>
+                <audio ref="audio" :src="audioData" @canplay="audioReadyPlay"></audio>
             </div>
             <div class="picture" v-else-if="record.mediaType == 'VIDEO'">
-                <img :src="fullPath(record.thumbnail)">
+                <img :src="thumbnailImage">
                 <div @click="playVideo" class="video-controls">
                     <i class="fa fa-play-circle-o"></i>
                 </div>
@@ -36,6 +36,9 @@
 
 <script>
     import fileService from "../../api/file"
+    import {createNamespacedHelpers} from "vuex"
+    const fileStore = createNamespacedHelpers("file");
+    import {file as fileTypes} from "../../store/types"
     export default {
         name: "MsgBox",
         props: {
@@ -48,6 +51,11 @@
             return {
                 avatar: require('../../assets/img/avatar.jpg'),
 
+                loginUserAvatar: null,
+                lineUserAvatar: null,
+                thumbnailImage: null,
+                audioData: null,
+
                 play: false,
                 audio: null,
                 audioCurrentTime: 0,
@@ -58,9 +66,30 @@
 
         },
         mounted(){
-
+            this.loadBase64Data();
         },
         methods: {
+            ...fileStore.mapActions({
+                getBase64File: fileTypes.GET_BASE64_FILE
+            }),
+            async loadBase64Data(){
+                if(this.record.mediaType === 'PICTURE' || this.record.mediaType === 'VIDEO'){
+                    if(this.record.thumbnail){
+                        this.thumbnailImage = await this.getBase64File(this.record.thumbnail);
+                    }
+                }else if(this.record.mediaType === 'AUDIO'){
+                    if(this.record.src){
+                        this.audioData = await this.getBase64File(this.record.src);
+                    }
+                }
+                //头像
+                if(this.loginUser && this.loginUser.avatar) {
+                    this.loginUserAvatar = await this.getBase64File(this.loginUser.avatar);
+                }
+                if(this.lineUser && this.lineUser.avatar) {
+                    this.lineUserAvatar = await this.getBase64File(this.lineUser.avatar);
+                }
+            },
             fullPath(path){
                 return fileService.fileURL(path);
             },
