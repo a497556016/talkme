@@ -9,7 +9,11 @@ const getters = {
 
 }
 
-const mutations = {}
+const mutations = {
+    [types.CLEAR_FILE_CACHE](state) {
+        localStorage.removeItem(FILE_CACHE_DATA);
+    }
+}
 
 const actions = {
     async [types.GET_BASE64_FILE]({state}, path){

@@ -27,5 +27,6 @@ export const chat = {
 }
 
 export const file = {
-    GET_BASE64_FILE: "GET_BASE64_FILE"
+    GET_BASE64_FILE: "GET_BASE64_FILE",
+    CLEAR_FILE_CACHE: "CLEAR_FILE_CACHE"
 }

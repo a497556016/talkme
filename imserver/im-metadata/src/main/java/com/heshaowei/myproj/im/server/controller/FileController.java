@@ -158,10 +158,17 @@ public class FileController {
             String path = URLDecoder.decode(encodedPath, StandardCharsets.UTF_8.name());
 
             if(StringUtils.isNotBlank(path)) {
-                String fileName = path.substring(path.lastIndexOf(File.separatorChar) + 1, path.lastIndexOf("."));
+                int begin = path.lastIndexOf(File.separatorChar) + 1;
+                int end = path.lastIndexOf(".");
+
+                String fileName = path.substring(begin);
+                if(end > -1) {
+                    fileName = path.substring(0, end);
+                }
                 if (fileName.contains("_")) {
                     fileName = fileName.split("_")[0];
                 }
+
                 FileInfo probe = new FileInfo();
                 probe.setFileName(fileName);
                 FileInfo fileInfo = this.fileRepository.findOne(Example.of(probe)).orElse(null);

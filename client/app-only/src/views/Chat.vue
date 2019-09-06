@@ -42,7 +42,8 @@
     import {createNamespacedHelpers} from 'vuex'
     const userStore = createNamespacedHelpers("user");
     const chatStore = createNamespacedHelpers("chat");
-    import {user as userTypes, chat as chatTypes} from '../store/types'
+    const fileStore = createNamespacedHelpers("file");
+    import {user as userTypes, chat as chatTypes, file as fileTypes} from '../store/types'
     import MsgBox from "../components/chat/MsgBox";
     import ActionSheet from "../components/sheets/ActionSheet";
     import MsgInputBar from "../components/chat/MsgInputBar";
@@ -102,6 +103,9 @@
             ...userStore.mapMutations({
                 logout: userTypes.LOGOUT
             }),
+            ...fileStore.mapMutations({
+                clearFileCache: fileTypes.CLEAR_FILE_CACHE
+            }),
             async reconnect(){
                 this.iMServer.init();
 
@@ -118,6 +122,7 @@
                     this.$router.push({path: '/login'})
                 }else if(item.index == 2){
                     this.clearChatRecords();
+                    this.clearFileCache();
                     alert('已成功清除')
                 }
                 this.actionsVisible = false;
