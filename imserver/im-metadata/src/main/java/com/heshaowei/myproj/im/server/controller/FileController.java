@@ -1,6 +1,5 @@
 package com.heshaowei.myproj.im.server.controller;
 
-import com.google.common.collect.Maps;
 import com.heshaowei.myproj.bean.response.Result;
 import com.heshaowei.myproj.im.server.dto.FileReq;
 import com.heshaowei.myproj.im.server.enums.MediaTypes;
@@ -8,28 +7,21 @@ import com.heshaowei.myproj.im.server.model.FileInfo;
 import com.heshaowei.myproj.im.server.properties.FileProperty;
 import com.heshaowei.myproj.im.server.repository.FileRepository;
 import com.heshaowei.myproj.im.server.utils.FileConvertUtil;
-import com.heshaowei.myproj.im.server.utils.FrameGrabberKit;
+import com.heshaowei.myproj.im.server.utils.VideoFrameUtil;
 import com.heshaowei.myproj.utils.image.GifUtils;
 import com.heshaowei.myproj.utils.image.ImageHandler;
-import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.bytedeco.javacv.FrameGrabber;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -121,10 +113,10 @@ public class FileController {
             }
         }else if(MediaTypes.VIDEO.equals(fileReq.getMediaType())){
             try {
-                FrameGrabberKit.randomGrabberFFmpegImage(src).saveToDisk(this.fileProperty.getFileSavePath() + thumbnail);
+                VideoFrameUtil.getFirstFrame(src, this.fileProperty.getFileSavePath() + thumbnail);
                 f.setThumbnail(thumbnail);
-            } catch (FrameGrabber.Exception e) {
-
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -159,12 +151,13 @@ public class FileController {
 
             if(StringUtils.isNotBlank(path)) {
                 int begin = path.lastIndexOf(File.separatorChar) + 1;
-                int end = path.lastIndexOf(".");
-
                 String fileName = path.substring(begin);
+
+                int end = fileName.lastIndexOf(".");
                 if(end > -1) {
-                    fileName = path.substring(0, end);
+                    fileName = fileName.substring(0, end);
                 }
+
                 if (fileName.contains("_")) {
                     fileName = fileName.split("_")[0];
                 }

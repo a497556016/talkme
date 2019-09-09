@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>my-project-server</artifactId>
-        <groupId>com.heshaowei.myproj</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <groupId>com.heshaowei.talkme</groupId>
+        <artifactId>im-server</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -27,12 +27,7 @@
             <artifactId>bson</artifactId>
             <!--<scope>provided</scope>-->
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.bytedeco/javacv-platform -->
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv-platform</artifactId>
-            <version>1.5.1</version>
-        </dependency>
+
 
 
 

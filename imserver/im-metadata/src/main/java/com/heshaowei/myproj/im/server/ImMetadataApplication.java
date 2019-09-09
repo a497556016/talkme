@@ -12,4 +12,5 @@ public class ImMetadataApplication {
     public static void main(String[] args) {
         SpringApplication.run(ImMetadataApplication.class, args);
     }
+
 }

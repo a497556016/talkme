@@ -1,4 +1,4 @@
-package com.heshaowei.myproj.im.server.utils;
+package com.heshaowei.tool.video;
 
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @Description javacv获取视频第一帧图片工具类
@@ -21,17 +22,42 @@ import java.io.IOException;
 public class FrameGrabberKit {
 
     public static void main(String[] args) throws Exception {
+        System.out.println("启动参数：\n"+Arrays.toString(args));
         long start = System.currentTimeMillis();
-        randomGrabberFFmpegImage("F:\\picture\\project\\im\\VIDEO\\8bcd887b-2611-4d5a-9887-a005c7b42771").saveToDisk("F:\\test1.jpg");
-        System.out.println(System.currentTimeMillis()-start);
+        if(args.length >= 2) {
+            String sourcePath = args[0], targetPath = args[1];
+            FrameGrabberKit fgk = new FrameGrabberKit();
+            fgk.setProperties(args);
+            fgk.randomGrabberFFmpegImage(sourcePath).saveToDisk(targetPath);
+        }else {
+            throw new IllegalArgumentException("参数不对");
+        }
+        System.out.println("总用时："+(System.currentTimeMillis()-start));
     }
+
+    private void setProperties(String[] args){
+        if(args.length >= 3) {
+            for(int i=2;i<args.length;i++) {
+                String arg = args[i];
+                if(arg.contains("=")){
+                    String[] strs = arg.split("=");
+                    if(strs[0].equals("width")){
+                        this.width = Integer.parseInt(strs[1]);
+                    }
+                }
+            }
+        }
+    }
+
+    private int width;
+    private int length;
 
     /**
      *
      * @param filePath 视频路径
      * @throws Exception
      */
-    public static OutputTool randomGrabberFFmpegImage(String filePath)
+    public OutputTool randomGrabberFFmpegImage(String filePath)
             throws Exception {
         OutputTool ot = new OutputTool();
 
@@ -67,7 +93,7 @@ public class FrameGrabberKit {
         return img;
     }
 
-    public static OutputTool doExecuteFrame(Frame f) {
+    public OutputTool doExecuteFrame(Frame f) {
 
         if (null ==f ||null ==f.image) {
             return new OutputTool();
@@ -75,7 +101,7 @@ public class FrameGrabberKit {
         int owidth = f.imageWidth;
         int oheight = f.imageHeight;
         // 对截取的帧进行等比例缩放
-        int width = 200;
+        int width = this.width == 0 ? 200:this.width;
         int height = (int) (((double) width / owidth) * oheight);
         Java2DFrameConverter converter =new Java2DFrameConverter();
         BufferedImage fecthedImage = converter.getBufferedImage(f);

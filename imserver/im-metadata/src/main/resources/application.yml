@@ -22,3 +22,7 @@ spring:
 
 file:
   save-path: F:\picture\project\
+
+tool-video:
+  path: F:\mywork\workspace_tools\talkme\tool\tool-video\target
+  name: tool-video-1.0-SNAPSHOT.jar
