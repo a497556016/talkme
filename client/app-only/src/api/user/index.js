@@ -14,5 +14,8 @@ export default {
     },
     register(user) {
         return http.post('/user/register', user);
+    },
+    updateUserInfo(user) {
+        return http.put('/user/updateById', user);
     }
 }

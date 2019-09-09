@@ -11,7 +11,7 @@ import java.util.Base64;
 public class FileConvertUtil {
     public static String toBase64(String path, String contentType){
         File file = new File(path);
-        if (file.exists()) {
+        if (file.exists() && file.isFile()) {
             Base64.Encoder encoder = Base64.getEncoder();
             try {
                 String base64 = encoder.encodeToString(FileUtils.readFileToByteArray(file));

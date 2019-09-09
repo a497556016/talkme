@@ -96,4 +96,28 @@ public class UserController {
         });*/
         return Result.success(users);
     }
+
+    @PutMapping("/updateById")
+    public Result updateById(@RequestBody User user){
+        if(null != user.getId()) {
+            User update = this.userRepository.findById(user.getId()).orElse(null);
+            if(null != update) {
+                if(null != user.getNickname()) {
+                    update.setNickname(user.getNickname());
+                }
+                if(null != user.getAvatar()) {
+                    update.setAvatar(user.getAvatar());
+                }
+                if(null != user.getPhone()) {
+                    update.setPhone(user.getPhone());
+                }
+                if(null != user.getPassword()) {
+                    update.setPassword(user.getPassword());
+                }
+                this.userRepository.save(update);
+            }
+            return Result.success();
+        }
+        return Result.error("没有用户ID");
+    }
 }

@@ -1,23 +1,16 @@
 <template>
     <div class="chat-page">
-        <action-sheet v-model="actionsVisible" :items="actionItems" @select="actionSelect" :position="{right: '10px', top: '10px'}"></action-sheet>
+        <action-sheet v-model="actionsVisible" :items="actionItems" @select="actionSelect" :position="{right: '20px', top: '10px'}"></action-sheet>
 
-        <div class="title">
-            <div>
-                <i class="fa fa-heart-o"></i>
-            </div>
-            {{lineUserInfo.nickname}}
-            <div class="actions" @click="showActions">
-                <i class="fa fa-plus"></i>
-            </div>
-        </div>
+        <app-title :title="lineUserInfo.nickname" :left="{icon: 'fa fa-heart-o'}" :right="{icon: 'fa fa-plus', handler: () => showActions()}"></app-title>
 
         <div class="connection-error" @click="reconnect" v-if="!isConnected">
             连接已断开
             <a>点击重试</a>
         </div>
 
-        <div ref="content" class="content">
+        <app-body ref="content" class="content">
+<!--        <div ref="content" class="content">-->
             <div class="split-tips"><span>打个招呼吧</span></div>
 
             <msg-box v-for="record in hisChatRecords" :record="record" :type="msgClass(record)" :login-user="loginUserInfo" :line-user="lineUserInfo"></msg-box>
@@ -29,7 +22,8 @@
             <div class="split-tips" v-if="newReceiveMessages.length > 0"><span>以上是最新</span></div>
 
             <msg-box v-for="record in chatRecords" :record="record" :type="msgClass(record)" :login-user="loginUserInfo" :line-user="lineUserInfo"></msg-box>
-        </div>
+<!--        </div>-->
+        </app-body>
 
         <div class="footer">
             <msg-input-bar @sendMsg="sendMsg" @clickMediaItem="showMediaBox"></msg-input-bar>
@@ -49,9 +43,11 @@
     import MsgInputBar from "../components/chat/MsgInputBar";
     import MediaSelectorBox from "../components/chat/MediaSelectorBox";
     import fileService from "../api/file"
+    import AppTitle from "../components/layout/AppTitle";
+    import AppBody from "../components/layout/AppBody";
     export default {
         name: "Home",
-        components: {MediaSelectorBox, MsgInputBar, ActionSheet, MsgBox},
+        components: {AppBody, AppTitle, MediaSelectorBox, MsgInputBar, ActionSheet, MsgBox},
         data(){
             const that = this;
             return {
@@ -88,8 +84,12 @@
             }
         },
         mounted(){
+            console.log('mounted chat')
             this.reconnect();
-
+        },
+        activated(){
+            console.log('activated chat')
+            this.goEnd();
         },
         methods: {
             ...chatStore.mapActions({
@@ -111,7 +111,7 @@
 
                 this.setChatRecords([]);
                 await this.loadHisChatRecord();
-                this.goEnd();
+                // this.goEnd();
             },
             actionSelect(item){
                 if(item.index == 0){
@@ -124,12 +124,14 @@
                     this.clearChatRecords();
                     this.clearFileCache();
                     alert('已成功清除')
+                }else if(item.index == 3){
+                    this.$router.push({path: '/user_center'});
                 }
                 this.actionsVisible = false;
             },
             goEnd(){
-                const el = this.$refs.content;
-                console.log(el.scrollTop, el.scrollHeight)
+                const el = this.$refs.content.$el;
+                console.log(el, el.scrollTop, el.scrollHeight)
 
                 el.scrollTo({
                     top: el.scrollHeight+500
@@ -186,6 +188,9 @@
             },
             showMediaBox(){
                 this.mediaBoxVisible = true;
+                this.$setBackAction(() => {
+                    this.mediaBoxVisible = false;
+                });
             },
             onSelectMedia(type, data){
                 //上传文件
@@ -217,8 +222,6 @@
 </script>
 
 <style scoped lang="less">
-
-
     .chat-page {
         .connection-error{
             text-align: center;
@@ -237,35 +240,8 @@
 
         background: #f8f8f8;
         height: 100%;
-        .title{
-            height: 3rem;
-            line-height: 3rem;
-            color: #000;
-            text-align: center;
-            font-size: 1.1rem;
-            font-weight: 500;
-            border-bottom: 0.01rem solid #e3e3e3;
-
-            padding: 0 15px;
-
-            position: fixed;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: space-between;
-
-            .actions {
-                font-size: 16px;
-            }
-        }
 
         .content {
-            position: absolute;
-            top: 3rem;
-            bottom: 3.6rem;
-            overflow-y: scroll;
-            /*padding: 10px;*/
-            width: 100%;
             .split-tips {
                 margin: 10px 0;
                 text-align: center;
@@ -284,46 +260,7 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            /*height: 3.6rem;
-            line-height: 3.6rem;
-            border-top: 0.01rem solid #e3e3e3;
-            display: flex;
-            background: #f8f8f8;
 
-            .icon {
-                width: 36px;
-                margin: 8px 5px;
-                text-align: center;
-                font-size: 1.6rem;
-                i{
-                    display: block;
-                    margin-top: 0.6rem;
-                }
-            }
-
-            .input {
-                padding: 0 10px;
-                flex: 1;
-                textarea {
-                    font-size: 1.5rem;
-                    color: #333;
-                    width: 100%;
-                    background: #fff;
-                    border: 1px solid #89b9eb;
-                    border-radius: 5px;
-                    height: 2.0rem;
-                    margin-top: 10px;
-                }
-            }
-
-            .send-btn {
-                background: #3fcb6e;
-                border: 0;
-                border-radius: 5px;
-                color: #fff;
-                width: 46px;
-                margin: 8px 5px;
-            }*/
         }
     }
 </style>

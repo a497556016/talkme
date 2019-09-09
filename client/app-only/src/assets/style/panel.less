@@ -1,0 +1,40 @@
+.list-panel {
+  border-bottom: 0.05em solid #eeeeee;
+  border-top: 0.05em solid #eeeeee;
+  margin-top: 1em;
+  background: white;
+
+  .item {
+    display: flex;
+    flex-direction: row;
+    height: 3em;
+    line-height: 3em;
+    .left{
+      width: 60px;
+      text-align: center;
+      font-size: 1.3em;
+    }
+    .center{
+      flex: 1;
+      color: #484848;
+    }
+    .right{
+      width: 30px;
+      text-align: center;
+      color: #aaaaaa;
+      font-size: 1.5em;
+    }
+  }
+
+  .list-item-line{
+    width: 100%;
+    hr{
+      border: 0;
+      height: 0.05rem;
+      background: #eaeee9;
+      color: #eeeeee;
+      margin: 0 0 0 60px;
+    }
+  }
+
+}

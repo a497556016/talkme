@@ -42,7 +42,7 @@
             }),
             chooseOne(user){
                 this.setLineUserInfo(user)
-                this.$router.push('/chat');
+                location.href = '/';
             }
         }
     }

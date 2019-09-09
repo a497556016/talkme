@@ -44,10 +44,10 @@
         top: 0px;*/
         display: inline-block;
         z-index: 100;
-        padding: 5px 10px;
+        padding: 15px;
         background: white;
         .item {
-            font-size: 13px;
+            font-size: 16px;
             padding: 10px 0;
             &:not(:last-child){
                 border-bottom: 1px solid #d2dde6;

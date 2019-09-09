@@ -89,12 +89,27 @@ const actions = {
         commit(types.SET_LOGIN_USER, res.data);
         // state.loginUserInfo = res.data;
         console.log(router)
-        router.push({path: '/chat'})
+        router.replace({path: '/chat'})
     },
     async [types.REGISTER] ({commit, state}, user) {
         const res = await api.register(user);
         commit(types.SET_LOGIN_USER, res.data);
-        router.push({path: '/chat'})
+        router.replace({path: '/chat'})
+    },
+    async [types.UPDATE_USER_INFO]({commit, state}, user){
+        const res = await api.updateUserInfo(user);
+        //更新当前登录用户信息
+        if(user.username == state.loginUserInfo.username || user.id == state.loginUserInfo.id) {
+            if (user.avatar)
+                state.loginUserInfo.avatar = user.avatar;
+            if (user.phone)
+                state.loginUserInfo.phone = user.phone;
+            if (user.nickname)
+                state.loginUserInfo.nickname = user.nickname;
+            if (user.token)
+                state.loginUserInfo.token = user.token;
+            commit(types.SET_LOGIN_USER, state.loginUserInfo);
+        }
     }
 }
 
