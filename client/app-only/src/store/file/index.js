@@ -44,6 +44,8 @@ const actions = {
         }
 
         return data;
+
+        // return await api.base64(path);
     }
 }
 

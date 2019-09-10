@@ -15,7 +15,7 @@
         mounted(){
             this.$setBackAction(() => {
                 this.close();
-            }, this);
+            });
         },
         methods: {
             close(){

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserMessageRepository extends MongoRepository<UserMessage, String> {
 
-    @Query(value = "{'$or':[{'$and':[{'from.username': ?0},{'to.username': ?1}]},{'$and':[{'from.username': ?1},{'to.username': ?0}]}]}")
+    @Query(value = "{$or: [{$and: [{'from.username': ?0},{'to.username': ?1}]},{$and:[{'from.username': ?1},{'to.username': ?0},{'sendState': 'SUCCESS'}]}]}")
     Page<UserMessage> selectHisUserMessages(String loginUsername, String lineUsername, Pageable pageable);
 
     @Query(value = "{'$or':[{'$and':[{'from.username': ?1},{'to.username': ?0},{'sendState': 'NOT_RECEIVE'}]}]}")

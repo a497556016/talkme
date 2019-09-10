@@ -2,11 +2,11 @@
     <div class="app-page">
         <app-title :title="title.text" :left="title.left" :right="title.right" :custom-style="titleStyle"></app-title>
 
-        <app-body>
+        <app-body :style="{bottom: footer?'3.6rem':'0'}" :background-color="body?body.backgroundColor:undefined">
             <slot></slot>
         </app-body>
 
-        <app-footer></app-footer>
+        <app-footer v-if="footer"></app-footer>
     </div>
 </template>
 
@@ -23,7 +23,9 @@
         name: "AppPage",
         components: {AppFooter, AppBody, AppTitle},
         props: {
-            title: Object
+            title: Object,
+            body: Object,
+            footer: Object
         },
         data(){
             return {

@@ -130,7 +130,7 @@ public class FileController {
         try {
             String path = URLDecoder.decode(encodedPath, StandardCharsets.UTF_8.name());
             java.io.File file = new java.io.File(fileProperty.getFileSavePath() + path);
-            if (file.exists()) {
+            if (file.exists() && file.isFile()) {
                 try {
                     OutputStream outputStream = response.getOutputStream();
                     IOUtils.write(FileUtils.readFileToByteArray(file), outputStream);

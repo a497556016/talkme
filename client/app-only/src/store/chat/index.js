@@ -46,6 +46,11 @@ const pushLineRecordStorage = function (loginUsername, lineUsername, record) {
     }else {
         curLineLogs.push(record);
     }
+
+    //最大只保存20条
+    if(curLineLogs.length > 20){
+        curLineLogs.splice(0, curLineLogs.length-20)
+    }
     localStorage.setItem(RECORD_DATAS, JSON.stringify(hisRecordsData));
 }
 
@@ -99,21 +104,27 @@ const actions = {
             state.chatRecords.push(record);
         }
 
-        //我和当前连线的用户对话
+        /*//我和当前连线的用户对话
         if(record.from.username == loginUserInfo.username || record.from.username == lineUserInfo.username) {
             pushLineRecordStorage(loginUserInfo.username, lineUserInfo.username, record);
         }
         //非当前连线的用户对话
         else {
             pushLineRecordStorage(loginUserInfo.username, record.from.username, record);
-        }
+        }*/
 
 
     },
     async [types.LOAD_HIS_CHAT_RECORDS] ({commit, state, getters, rootGetters}) {
         const loginUserInfo = rootGetters['user/'+userTypes.GET_LOGIN_USER];
         const lineUserInfo = rootGetters['user/'+userTypes.GET_LINE_USER_INFO];
-        state.hisChatRecords = getCurLineHisRecords(loginUserInfo.username, lineUserInfo.username).curLineLogs;;
+        // state.hisChatRecords = getCurLineHisRecords(loginUserInfo.username, lineUserInfo.username).curLineLogs;;
+
+        const {data} = await api.loadHisChatRecord({
+            loginUsername: loginUserInfo.username, lineUsername: lineUserInfo.username
+        });
+        state.hisChatRecords = data.content.reverse();
+
         if(!state.hisChatRecords){
             state.hisChatRecords = [];
         }
@@ -122,7 +133,7 @@ const actions = {
         if(res.code == 1 && res.data.content){
             state.newReceiveMessages = res.data.content.reverse();
 
-            pushLineRecordStorage(loginUserInfo.username, lineUserInfo.username, res.data.content.reverse())
+            // pushLineRecordStorage(loginUserInfo.username, lineUserInfo.username, res.data.content.reverse())
         }
     }
 }

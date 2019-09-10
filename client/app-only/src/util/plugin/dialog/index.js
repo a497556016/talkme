@@ -6,13 +6,16 @@ function DialogBuilder(Vue) {
     return {
         installAlert: {
             info(msg, options){
-                this.install(Object.assign({msg, dialogType: '1', msgType: '1'}, options), Dialog);
+                return this.install(Object.assign({msg, dialogType: '1', msgType: '1', autoClose: true}, options), Dialog);
             },
             success(msg, options){
-                this.install(Object.assign({msg, dialogType: '1', msgType: '2'}, options), Dialog);
+                return this.install(Object.assign({msg, dialogType: '1', msgType: '2', autoClose: true}, options), Dialog);
             },
             error(msg, options){
-                this.install(Object.assign({msg, dialogType: '1', msgType: '3'}, options), Dialog);
+                return this.install(Object.assign({msg, dialogType: '1', msgType: '3', autoClose: true}, options), Dialog);
+            },
+            loading(msg, options){
+                return this.install(Object.assign({msg, dialogType: '1', msgType: '4'}, options), Dialog);
             }
         },
         installConfirm(options) {
@@ -49,6 +52,7 @@ function DialogBuilder(Vue) {
                 data: options
             }).$mount();
             document.querySelector('body').appendChild(component.$el);
+            return component;
         }
     }
 }
@@ -61,25 +65,11 @@ export default {
         Vue.prototype.$alert = {
             info: db.installAlert.info.bind(db),
             success: db.installAlert.success.bind(db),
-            error: db.installAlert.error.bind(db)
+            error: db.installAlert.error.bind(db),
+            loading: db.installAlert.loading.bind(db)
         }
         Vue.prototype.$confirm = db.installConfirm.bind(db);
         Vue.prototype.$imageViewer = db.installImage.bind(db);
-        Vue.prototype.$loading = {
-            mask: db.installLoadingMask.bind(db),
-            bar(){
-
-            },
-            close() {
-                console.log('关闭加载')
-                const items = document.querySelector('body').getElementsByClassName('loading-mask');
-                if(items){
-                    for(let i=0;i<items.length;i++){
-                        items[i].remove();
-                    }
-                }
-            }
-        }
 
         Vue.prototype.$videoPlayer = db.installVideoPlayer.bind(db);
     }

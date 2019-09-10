@@ -9,7 +9,7 @@
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
 
             <div class="picture" v-if="record.mediaType == 'PICTURE'">
-                <img @click="fullScreenView(record.src)" :src="thumbnailImage"/>
+                <img @click="fullScreenView(record.src)" :src="fullPath(record.thumbnail)"/>
             </div>
             <div class="audio" v-else-if="record.mediaType == 'AUDIO'">
                 <span @click="playAudio">
@@ -21,10 +21,10 @@
                 </span>
 
                 <span style="margin-left: 20px;font-size: 12px">{{audioCurrentTime}}/{{audioDuration}} s</span>
-                <audio ref="audio" :src="audioData" @canplay="audioReadyPlay"></audio>
+                <audio ref="audio" :src="fullPath(record.src)" @canplay="audioReadyPlay"></audio>
             </div>
             <div class="picture" v-else-if="record.mediaType == 'VIDEO'">
-                <img :src="thumbnailImage">
+                <img :src="fullPath(record.thumbnail)">
                 <div @click="playVideo" class="video-controls">
                     <i class="fa fa-play-circle-o"></i>
                 </div>
@@ -53,8 +53,8 @@
 
                 loginUserAvatar: null,
                 lineUserAvatar: null,
-                thumbnailImage: null,
-                audioData: null,
+                // thumbnailImage: null,
+                // audioData: null,
 
                 play: false,
                 audio: null,
@@ -73,7 +73,7 @@
                 getBase64File: fileTypes.GET_BASE64_FILE
             }),
             async loadBase64Data(){
-                if(this.record.mediaType === 'PICTURE' || this.record.mediaType === 'VIDEO'){
+                /*if(this.record.mediaType === 'PICTURE' || this.record.mediaType === 'VIDEO'){
                     if(this.record.thumbnail){
                         this.thumbnailImage = await this.getBase64File(this.record.thumbnail);
                     }
@@ -81,7 +81,7 @@
                     if(this.record.src){
                         this.audioData = await this.getBase64File(this.record.src);
                     }
-                }
+                }*/
                 //头像
                 if(this.loginUser && this.loginUser.avatar) {
                     this.loginUserAvatar = await this.getBase64File(this.loginUser.avatar);

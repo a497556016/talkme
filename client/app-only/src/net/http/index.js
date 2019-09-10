@@ -11,12 +11,16 @@ axios.defaults.timeout = 10000;   // 超时时间
 axios.defaults.baseURL = BASE_URL;  // 默认地址
 
 axios.withLoading = function (msg) {
-    Vue.prototype.$loading.mask(msg||'加载中...')
+    const loading = Vue.prototype.$alert.loading(msg||'加载中...');
+    this.loadings = this.loadings||[];
+    this.loadings.push(loading);
     return this;
 }
 
 axios.closeLoading = function () {
-    Vue.prototype.$loading.close();
+    if(this.loadings && this.loadings.length > 0){
+        this.loadings.pop().close();
+    }
 }
 
 export default axios;

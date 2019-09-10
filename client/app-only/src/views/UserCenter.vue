@@ -1,8 +1,8 @@
 <template>
     <div class="user-center">
         <app-page :title="title">
-            <div class="user-info-panel">
-                <div class="avatar" @click="changeAvatar">
+            <div class="user-info-panel" @click="toEditUser">
+                <div class="avatar" @click="changeAvatar($event)">
                     <img :src="avatarData"/>
                 </div>
                 <div class="info">
@@ -78,13 +78,18 @@
                     this.avatarData = avatarData;
                 }
             },
-            async changeAvatar(){
+            async changeAvatar(evt){
+                // evt.preventDefault();
+                evt.cancelBubble = true;
                 const data = await cameraUtil.getPhoto();
                 const res = await fileService.upload("PICTURE", data);
                 if(res.code == 1){
                     await this.updateUserInfo({id: this.loginUser.id, avatar: res.data.path});
                     this.getUserAvatarData();
                 }
+            },
+            toEditUser(){
+                this.$router.push('/user_edit')
             }
         }
     }

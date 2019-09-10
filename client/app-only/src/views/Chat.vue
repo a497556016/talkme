@@ -13,7 +13,11 @@
 <!--        <div ref="content" class="content">-->
             <div class="split-tips"><span>打个招呼吧</span></div>
 
+
             <msg-box v-for="record in hisChatRecords" :record="record" :type="msgClass(record)" :login-user="loginUserInfo" :line-user="lineUserInfo"></msg-box>
+            <div class="split-tips" v-if="hisChatRecords.length > 0">
+                <span>{{hisChatRecords[hisChatRecords.length-1].time}}</span>
+            </div>
 
             <div class="split-tips" v-if="hisChatRecords.length > 0"><span>以上是历史消息</span></div>
 
@@ -111,7 +115,7 @@
 
                 this.setChatRecords([]);
                 await this.loadHisChatRecord();
-                // this.goEnd();
+                this.goEnd();
             },
             actionSelect(item){
                 if(item.index == 0){
@@ -128,6 +132,7 @@
                     this.$router.push({path: '/user_center'});
                 }
                 this.actionsVisible = false;
+                this.$cancelBackAction('actionsBack');
             },
             goEnd(){
                 const el = this.$refs.content.$el;
@@ -187,7 +192,7 @@
                 this.actionsVisible = true;
                 this.$setBackAction(() => {
                     this.actionsVisible = false;
-                });
+                }, 'actionsBack');
             },
             showMediaBox(){
                 this.mediaBoxVisible = true;
@@ -245,6 +250,7 @@
         height: 100%;
 
         .content {
+            bottom: 3.6rem;
             .split-tips {
                 margin: 10px 0;
                 text-align: center;

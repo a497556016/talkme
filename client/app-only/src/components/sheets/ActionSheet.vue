@@ -37,17 +37,18 @@
 </script>
 
 <style scoped lang="less">
-    @import "../../assets/style/modal";
+    @import "../../assets/style/index";
     .actions-sheet{
         position: absolute;
         /*left: 0px;
         top: 0px;*/
         display: inline-block;
         z-index: 100;
-        padding: 15px;
+        padding: 10px 15px;
         background: white;
+        color: @black;
         .item {
-            font-size: 16px;
+            font-size: 15px;
             padding: 10px 0;
             &:not(:last-child){
                 border-bottom: 1px solid #d2dde6;

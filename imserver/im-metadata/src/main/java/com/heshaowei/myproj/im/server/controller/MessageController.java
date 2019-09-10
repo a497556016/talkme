@@ -46,7 +46,7 @@ public class MessageController {
     public Result<Page<UserMessage>> queryHisUserMessages(String loginUsername, String lineUsername){
         if(null != loginUsername && null != lineUsername) {
             Sort sort = Sort.by(Sort.Direction.DESC,"time");
-            Page<UserMessage> page = this.userMessageRepository.selectHisUserMessages(loginUsername, lineUsername, PageRequest.of(0, 10, sort));
+            Page<UserMessage> page = this.userMessageRepository.selectHisUserMessages(loginUsername, lineUsername, PageRequest.of(0, 20, sort));
 //            page.getContent().forEach(m -> toBase64DataFromSource(m));
             return Result.success(page);
         }

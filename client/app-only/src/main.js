@@ -26,12 +26,23 @@ console.log(navigator)
 
 const BACK_ACTIONS = [];
 function init() {
-  Vue.prototype.$setBackAction = function (callFunc, scope) {
+  Vue.prototype.$setBackAction = function (callFunc, key) {
     BACK_ACTIONS.push({
       func: callFunc,
-      scope: scope
+      key: key
     });
   };
+  Vue.prototype.$cancelBackAction = function (key) {
+    const is = [];
+    BACK_ACTIONS.forEach((ac, i) => {
+      if(ac.key === key){
+        is.push(i);
+      }
+    });
+    if(is.length) {
+      is.forEach(i => BACK_ACTIONS.splice(i, 1));
+    }
+  }
 
   new Vue({
     render: h => h(App),
@@ -60,7 +71,7 @@ if('undefined' == typeof cordova || navigator.platform == 'Win32'){
 
     if(BACK_ACTIONS.length != 0) {
       const actionFunc = BACK_ACTIONS.pop();
-      actionFunc.func.call(actionFunc.scope);
+      actionFunc.func.call();
     }else if("/chat" === path || "/login" === path) {
       if (exitClicks === 0) {
         Vue.prototype.$toast('再按一次退出', {timeout: 1000});
@@ -77,7 +88,8 @@ if('undefined' == typeof cordova || navigator.platform == 'Win32'){
       exitClicks += 1;
 
     }else {
-      window.history.back();
+      router.back();
+      // window.history.back();
     }
   }, false)
 }

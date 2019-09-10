@@ -5,7 +5,7 @@
         </div>
         {{title}}
         <div class="action" v-if="right" @click="rightClick">
-            <i :class="[right.icon||'fa fa-list']"></i>
+            <i :class="[right.icon||'']"></i>
         </div>
     </div>
 </template>

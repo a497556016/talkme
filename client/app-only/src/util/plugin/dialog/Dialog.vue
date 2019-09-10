@@ -30,12 +30,22 @@
                 msgType: '1',
 
                 msg: null,
-                poster: null
+                poster: null,
+
+                autoClose: false
+            }
+        },
+        mounted(){
+            if(this.autoClose){
+                setTimeout(() => {
+                    this.close();
+                }, 2000);
             }
         },
         methods: {
             close(){
                 const dialog = this.$refs['dialog'];
+                console.log('移除弹出框', dialog)
                 if(dialog){
                     document.querySelector('body').removeChild(dialog);
                 }

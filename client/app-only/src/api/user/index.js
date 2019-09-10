@@ -16,6 +16,6 @@ export default {
         return http.post('/user/register', user);
     },
     updateUserInfo(user) {
-        return http.put('/user/updateById', user);
+        return http.withLoading("正在更新用户信息").put('/user/updateById', user);
     }
 }
