@@ -86,9 +86,9 @@ const mutations = {
         state.chatRecords = records;
     },
     [types.CLEAR_CHAT_RECORDS] (state) {
-        state.hisChatRecords = [];
+        /*state.hisChatRecords = [];
         state.chatRecords = [];
-        state.newReceiveMessages = [];
+        state.newReceiveMessages = [];*/
         localStorage.removeItem(RECORD_DATAS);
     }
 }

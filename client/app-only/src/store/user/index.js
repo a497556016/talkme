@@ -47,10 +47,10 @@ const getters = {
 
 const mutations = {
     [types.LOGOUT] (state) {
-        state.loginUserInfo = null;
+        state.loginUserInfo = {};
         localStorage.removeItem(LOGIN_USER_INFO_KEY);
 
-        state.lineUserInfo = null;
+        state.lineUserInfo = {};
         localStorage.removeItem(LINE_USER_INFO_KEY);
     },
     [types.SET_LOGIN_USER] (state, user) {

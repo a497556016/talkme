@@ -1,6 +1,5 @@
 import Dialog from './Dialog'
 import Toast from './Toast'
-import LoadingMask from './LoadingMask'
 
 function DialogBuilder(Vue) {
     return {
@@ -33,10 +32,6 @@ function DialogBuilder(Vue) {
             }else {
                 this.install(Object.assign({msg: src, dialogType: '3'}, options), Dialog);
             }
-        },
-
-        installLoadingMask(msg, options){
-            this.install(Object.assign({msg}, options), LoadingMask);
         },
 
         installVideoPlayer(src, options){

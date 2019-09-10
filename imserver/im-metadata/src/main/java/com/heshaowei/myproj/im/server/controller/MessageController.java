@@ -56,8 +56,8 @@ public class MessageController {
     @GetMapping("/queryNotReceiveMessages")
     public Result<Page<UserMessage>> queryNotReceiveMessages(String loginUsername, String lineUsername){
         if(null != loginUsername && null != lineUsername) {
-            Sort sort = Sort.by(Sort.Direction.ASC,"time");
-            Page<UserMessage> page = this.userMessageRepository.selectNotReceiveMessages(loginUsername, lineUsername, PageRequest.of(0, 10, sort));
+            Sort sort = Sort.by(Sort.Direction.DESC,"time");
+            Page<UserMessage> page = this.userMessageRepository.selectNotReceiveMessages(loginUsername, lineUsername, PageRequest.of(0, 20, sort));
             //修改状态
             page.getContent().forEach(m -> m.setSendState(MessageStates.SUCCESS));
             this.userMessageRepository.saveAll(page.getContent());

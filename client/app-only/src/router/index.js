@@ -30,13 +30,13 @@ router.beforeEach((to, from, next) => {
         //check login
         const userInfo = store.getters['user/'+userTypes.GET_LOGIN_USER];
         console.log('检查用户登录信息：', userInfo)
-        if(!userInfo || (!userInfo.username && !userInfo.phone)){
+        if(!userInfo || !userInfo.token){
             next({path: '/login'});
         }else if(to.path == '/chat') {
             console.log(111,to)
 
             const lineUserInfo = store.getters['user/'+userTypes.GET_LINE_USER_INFO];
-            if(null == lineUserInfo) {
+            if(!lineUserInfo || !lineUserInfo.id) {
                 next({path: '/search_user'});
             }else if(from.path === '/search_user'){
                 const chatInstance = to.matched[0].instances.default;

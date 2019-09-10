@@ -3,7 +3,7 @@
         <div style="margin: 5px"></div>
         <img class="avatar" v-if="type == 'right' && (!loginUser || !loginUser.avatar)" :src="avatar">
         <img class="avatar" v-else-if="type == 'left' && (!lineUser || !lineUser.avatar)" :src="avatar">
-        <img class="avatar" v-else :src="type == 'left'?lineUserAvatar:loginUserAvatar"/>
+        <img class="avatar" v-else :src="type == 'left'?fullPath(lineUser.avatar):fullPath(loginUser.avatar)"/>
 
         <div class="text-box" >
             <div class="nickname" v-if="record.from.nickname">{{record.from.nickname}}</div>
@@ -66,7 +66,7 @@
 
         },
         mounted(){
-            this.loadBase64Data();
+            // this.loadBase64Data();
         },
         methods: {
             ...fileStore.mapActions({
