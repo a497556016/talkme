@@ -78,7 +78,7 @@ class CameraUtil {
                         })
                     }
                 }, message => {
-                    alert(message)
+                    // alert(message)
                     reject(message);
                 }, this.options);
             }else {

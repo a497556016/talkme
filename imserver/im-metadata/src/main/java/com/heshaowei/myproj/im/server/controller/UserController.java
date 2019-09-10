@@ -13,6 +13,7 @@ import io.jsonwebtoken.lang.Collections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,34 +67,10 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public Result<List> list(HttpServletRequest request, String username, String nickname, String phone){
-        User probe = new User();
-        probe.setUsername(username);
-        probe.setNickname(nickname);
-        probe.setPhone(phone);
-        ExampleMatcher matcher = ExampleMatcher.matching();
-        matcher.withMatcher("username", ExampleMatcher.GenericPropertyMatchers.contains());
-        matcher.withMatcher("nickname", ExampleMatcher.GenericPropertyMatchers.contains());
-        matcher.withMatcher("phone", ExampleMatcher.GenericPropertyMatchers.contains());
+    public Result<List> list(HttpServletRequest request, String query){
+        PageRequest pr = PageRequest.of(0, 10);
+        List<User> users = this.userRepository.queryByKeyWords(LoginUserUtil.getUsername(request), query, pr);
 
-        List<User> users = this.userRepository.findAllByUsernameIsNot(LoginUserUtil.getUsername(request), Example.of(probe, matcher));
-        /*List<User> users = this.userRepository.findAll(new Specification<User>() {
-            @Override
-            public Predicate toPredicate(Root<User> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder criteriaBuilder) {
-                List<Predicate> predicates = Lists.newArrayList();
-                String token = request.getHeader("token");
-                try {
-                    String username = JwtUtils.parseJWT(token).getSubject();
-                    predicates.add(criteriaBuilder.notEqual(root.get("username"), username));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                predicates.add(criteriaBuilder.like(root.get("username"), username));
-                predicates.add(criteriaBuilder.like(root.get("nickname"), nickname));
-                predicates.add(criteriaBuilder.like(root.get("phone"), phone));
-                return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-            }
-        });*/
         return Result.success(users);
     }
 

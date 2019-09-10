@@ -185,6 +185,9 @@
             },
             showActions(){
                 this.actionsVisible = true;
+                this.$setBackAction(() => {
+                    this.actionsVisible = false;
+                });
             },
             showMediaBox(){
                 this.mediaBoxVisible = true;

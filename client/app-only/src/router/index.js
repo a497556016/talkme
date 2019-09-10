@@ -33,9 +33,16 @@ router.beforeEach((to, from, next) => {
         if(!userInfo || (!userInfo.username && !userInfo.phone)){
             next({path: '/login'});
         }else if(to.path == '/chat') {
+            console.log(111,to)
+
             const lineUserInfo = store.getters['user/'+userTypes.GET_LINE_USER_INFO];
             if(null == lineUserInfo) {
                 next({path: '/search_user'});
+            }else if(from.path === '/search_user'){
+                const chatInstance = to.matched[0].instances.default;
+                if(chatInstance){
+                    chatInstance.reconnect();
+                }
             }
         }
     }

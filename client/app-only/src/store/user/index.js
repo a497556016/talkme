@@ -64,6 +64,9 @@ const mutations = {
             localStorage.setItem(LINE_USER_INFO_KEY, JSON.stringify(user));
             state.lineUserInfo = user;
         }
+    },
+    [types.CLEAR_SEARCH_RESULT_LIST](state) {
+        state.searchUserList = [];
     }
 }
 

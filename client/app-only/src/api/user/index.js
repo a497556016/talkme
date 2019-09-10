@@ -5,7 +5,7 @@ export default {
         return http.get('/only-chat-server/getLineUserInfo');
     },
     selectUserList(params){
-        return http.get('/user/list', params);
+        return http.get('/user/list', {params});
     },
     login(params) {
         return http.get('/user/login', {

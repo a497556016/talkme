@@ -5,7 +5,7 @@
             <button class="im-button im-button-primary" @click="searchUser(searchWords)">搜索</button>
         </div>
         <div class="result-list">
-            <div v-if="searchUserList.length == 0">请输入用户名查找</div>
+            <div v-if="searchUserList.length == 0">选择你想要连线的人吧(*^▽^*)</div>
             <div class="item" @click="chooseOne(item)" v-for="item in searchUserList">
                 <div class="text">{{item.nickname}} </div>
                 <div class="desc">{{item.username}} {{item.phone}}</div>
@@ -26,7 +26,10 @@
             }
         },
         mounted(){
-            this.searchUser();
+            // this.searchUser();
+        },
+        activated(){
+            this.clearSearchResultList();
         },
         computed: {
             ...userStore.mapGetters({
@@ -38,11 +41,13 @@
                 searchUser: userTypes.SEARCH_USER
             }),
             ...userStore.mapMutations({
-                setLineUserInfo: userTypes.SET_LINE_USER_INFO
+                setLineUserInfo: userTypes.SET_LINE_USER_INFO,
+                clearSearchResultList: userTypes.CLEAR_SEARCH_RESULT_LIST
             }),
             chooseOne(user){
                 this.setLineUserInfo(user)
-                location.href = '/';
+                this.$router.replace('/chat')
+                // location.href = '/';
             }
         }
     }
