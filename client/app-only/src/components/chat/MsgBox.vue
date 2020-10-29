@@ -290,7 +290,7 @@
                 left: 100%;
                 top: 8px;
                 border-top: 6px solid transparent;
-                border-left: 10px solid #3fcb6e;
+                border-left: 10px solid #5fec8f;
                 border-bottom: 6px solid transparent;
             }
             .audio:after{
@@ -301,7 +301,7 @@
                 left: 100%;
                 top: 8px;
                 border-top: 6px solid transparent;
-                border-left: 10px solid #3fcb6e;
+                border-left: 10px solid #5fec8f;
                 border-bottom: 6px solid transparent;
             }
         }
